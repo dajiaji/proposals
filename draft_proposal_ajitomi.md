@@ -58,27 +58,31 @@ When a web service (e.g., https://device-user.example.com) accesses a device (e.
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_1_1.png" width="480px">
 </div>
 
- However, it cannot guarantee whether the ‘device.local’ displayed on the pop-up window is really the same as the domain name of the device which the user intends to grant the access to. If an evil device on the local network gets a plausible domain name like ‘printer.local’ upfront and then the proper device has to use a secondary name like ‘printer2.local’, it may be difficult for the user to find such a situation.
+However, it cannot guarantee whether the ‘device.local’ displayed on the pop-up window is really the same as the domain name of the device which the user intends to grant the access to.
+If an evil device on the local network gets a plausible domain name like ‘printer.local’ upfront and then the proper device has to use a secondary name like ‘printer2.local’, it may be difficult for the user to find such a situation.
 
- Approach #1 resolves this problem by extending a browser API and UI. Specifically, by adding a textbox to input a PIN code to the pop-up window as follows, it makes the users to be able to bind the displayed domain name to the real device.
+Approach #1 resolves this problem by extending a browser API and UI. Specifically, by adding a textbox to input a PIN code to the pop-up window as follows, it makes the users to be able to bind the displayed domain name to the real device.
 
 <div align="center">
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_1_2.png" width="480px">
 </div>
 
-  Since the PIN code should be short and easy to input from the aspect of usability, we believe that it is a good choice to use [J-PAKE][11], which provides the way to generate and share a cryptographic secure key based on a short password. If browsers can support [Elliptic Curve J-PAKE Cipher Suites for TLS][12], the above UI can be implemented in more secure manner. In addition, J-PAKE has already been implemented on Firefox and the use of J-PAKE has been discussed in [W3C Second Screen WG][13] too. From this point of view, we believe that the approach is basically practical.
+Since the PIN code should be short and easy to input from the aspect of usability, we believe that it is a good choice to use [J-PAKE][11], which provides the way to generate and share a cryptographic secure key based on a short password.
+If browsers can support [Elliptic Curve J-PAKE Cipher Suites for TLS][12], the above UI can be implemented in more secure manner.
+In addition, J-PAKE has already been implemented on Firefox and the use of J-PAKE has been discussed in [W3C Second Screen WG][13] too. From this point of view, we believe that the approach is basically practical.
 
 _NOTE: As [ECJPAKE][12] defines only the way to generate a shared key based on a password,  we have to define a specific way to bind the domain name to the TLS session. For example, using ‘local domain name + fingerprint of the self-signed certificate’ as the TLS server identifier might be one of the solution._
+Supporting J-PAKE, fetch API might have to have an additional parameter that to declare the use fo J-PAKE explicitly as follows.
 
-  Supporting J-PAKE, fetch API might have to have an additional parameter that to declare the use fo J-PAKE explicitly as follows.
+```javascript
+fetch("https://device.local/stuff",
+  {tls: "jpake"})
+.then(res => res.json());
+```
 
-  ```javascript
-  fetch("https://device.local/stuff", {tls: "jpake"}).then(res => res.json());
-  ```
-
-  Besides using ephemeral PIN code displayed on a device, there are other ways to share a password as follows:
-  - Use a secondary communication chanel such as BLE or NFC.
-  - Use a static PIN code printed on the device.
+Besides using ephemeral PIN code displayed on a device, there are other ways to share a password as follows:
+- Use a secondary communication chanel such as BLE or NFC.
+- Use a static PIN code printed on the device.
 
 ### Requirements for Browsers 
 
@@ -98,7 +102,8 @@ Regarding Approach #1, following technical topics might have to be discussed in 
 
 ## Approach #2 (ACE/OAuth based approach)
 
-Approach #1 basically depends only on user approval. There are no trust anchors that can guarantee the authenticity of devices and it is difficult for users to find whether the device is infected by a malware or not from its appearance. From the standpoint of web services, it looks unreliable that a server authentication must be delegated only to the user’s judgement.
+Approach #1 basically depends only on user approval. There are no trust anchors that can guarantee the authenticity of devices and it is difficult for users to find whether the device is infected by a malware or not from its appearance.
+From the standpoint of web services, it looks unreliable that a server authentication must be delegated only to the user’s judgement.
 
 Approach #2 resolves this problem by introducing an [ACE][14]/[OAuth][15] AS (Authorization Server) as an authority of the device into the local HTTPS system based on the ACE framework shown the figure below.
 
@@ -106,26 +111,27 @@ Approach #2 resolves this problem by introducing an [ACE][14]/[OAuth][15] AS (Au
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_2_1.png" width="480px">
 </div>
 
- The ACE components have following relationships:
- -  The device, which is regarded as an RS (Resource Server) in the context of ACE, has a trust relationship with the AS. In our assumption, the AS is basically maintained by the device manufacturer.
- -  The web server, which is regarded as a client in the context of ACE, has been registered to the AS in advance and has a trust relationship with it.
- -  The user, which is regarded as a Resource Owner in the context of ACE, has an account for the AS and the ownership information to device has been registered to the AS in advance.
- Under the relationship, the client can get an access token to access the device based on the user approval. At this time, the client can also get the RS information that includes an URI and an RPK (Raw Public Key) or self-signed certificate of the device (step (B) shown the above). However, existing web browsers don’t permit the access to the device with the access token (step (C)). 
+The ACE components have following relationships:
+- The device, which is regarded as an RS (Resource Server) in the context of ACE, has a trust relationship with the AS. In our assumption, the AS is basically maintained by the device manufacturer.
+- The web server, which is regarded as a client in the context of ACE, has been registered to the AS in advance and has a trust relationship with it.
+- The user, which is regarded as a Resource Owner in the context of ACE, has an account for the AS and the ownership information to device has been registered to the AS in advance.
+Under the relationship, the client can get an access token to access the device based on the user approval. At this time, the client can also get the RS information that includes an URI and an RPK (Raw Public Key) or self-signed certificate of the device (step (B) shown the above). However, existing web browsers don’t permit the access to the device with the access token (step (C)). 
 
- Therefore, Approach #2 extends a browser API and related UI to enable the client to access the device only when the client provides the browser with the RS information (a self-signed certificate or RPK) as a trusted one. The RS information can be sent to the browser as an extended parameter of fetch API as follows:
+Therefore, Approach #2 extends a browser API and related UI to enable the client to access the device only when the client provides the browser with the RS information (a self-signed certificate or RPK) as a trusted one. The RS information can be sent to the browser as an extended parameter of fetch API as follows:
 
- ```javascript
- // When RS Information includes a RPK, 
- fetch("https://device.local/stuff", {
-   tls: "rpk", certificate: "base64-encoded rpk>"})
- .then(res => res.json());
+```javascript
+// When RS Information includes a RPK, 
+fetch("https://device.local/stuff", {
+  tls: "rpk",
+  certificate: "base64-encoded rpk>"})
+.then(res => res.json());
 
- // When RS Informatin includes a self-signed certificate, 
- fetch("https://device.local/stuff", {
-   tls: "pkix", // default value that can be omitted.
-   certificate: "<base64-encoded certificate or its fingerprint>"})
- .then(res => res.json());
- ```
+// When RS Informatin includes a self-signed certificate, 
+fetch("https://device.local/stuff", {
+  tls: "pkix", // default value that can be omitted.
+  certificate: "<base64-encoded certificate or its fingerprint>"})
+.then(res => res.json());
+```
 
  When the fetch API above is called, the browser shows a following pop-up window.
 
@@ -133,9 +139,10 @@ Approach #2 resolves this problem by introducing an [ACE][14]/[OAuth][15] AS (Au
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_2_2.png" width="480px">
 </div>
 
-  As the result, HTTPS accesses from the web service to the device are allowed by the browser based on the trust relationship between the client and the AS (and the device) and, user aapproval.
+As the result, HTTPS accesses from the web service to the device are allowed by the browser based on the trust relationship between the client and the AS (and the device) and, user aapproval.
 
-  In addtion, Approach #2 has another advantage that the device (RS) has an opportunity to know the client(‘s origin) before the access from the device because, not to mention, the access token is issued before the access. This means that the device can use proper CORS settings for the client dynamically. The feasure has an affinity for a secure local cross-origin access method described in [CORS and RFC1918][16].
+In addtion, Approach #2 has another advantage that the device (RS) has an opportunity to know the client(‘s origin) before the access from the device because, not to mention, the access token is issued before the access.
+This means that the device can use proper CORS settings for the client dynamically. The feasure has an affinity for a secure local cross-origin access method described in [CORS and RFC1918][16].
 
 ### Requirements for Browsers 
 
@@ -153,9 +160,16 @@ Regarding Approach #2, following technical topics might have to be discussed in 
 
 Approach #2 can be regarded as an application-layer solution. Therefore, when we want to have a revocation mechanism ready in case that the devices’ severe vulnerability is disclosed, we have to implement it on top of Approach #2. If we can adopt a TLS-layer solution, we can use existing technologies of certificate revocation (CRL, OCSP Stapling, etc.).
 
-We believe that the framework, on which a device vendor validates domain names of the devices and guarantees the authenticity of them, would be useful even if the names are ununique local names. Actually, there are some standardization activities related to such a vendor-issued certificte (hereafter, private CA issued certificate). For example, [IEEE802.1AR][18] defines IDevID and LdevID that are device identifiers issued by the device manufacturers, and it seems that [PKI Certificate Identifier Format for Devices][19] tries to make the device identifiers be available on the Web PKI. In addition, [IETF ANIMA WG][20] has been developing a way to issue LDevID, which is a sort of vendor-issued certificates, based on IDevID. Therefore, the vendor-issued certificate can be regarded as an ordinary concept on IoT security and its trust model. Furthermore, vendor-issued certificates are useful to guarantee the devices have TPM functionarity, which is a candidate solution to keep private keys secure even if the devices are in local network that has no administrators.
+We believe that the framework, on which a device vendor validates domain names of the devices and guarantees the authenticity of them, would be useful even if the names are ununique local names.
+Actually, there are some standardization activities related to such a vendor-issued certificte (hereafter, private CA issued certificate).
+For example, [IEEE802.1AR][18] defines IDevID and LdevID that are device identifiers issued by the device manufacturers, and it seems that [PKI Certificate Identifier Format for Devices][19] tries to make the device identifiers be available on the Web PKI.
+In addition, [IETF ANIMA WG][20] has been developing a way to issue LDevID, which is a sort of vendor-issued certificates, based on IDevID.
+Therefore, the vendor-issued certificate can be regarded as an ordinary concept on IoT security and its trust model.
+Furthermore, vendor-issued certificates are useful to guarantee the devices have TPM functionarity, which is a candidate solution to keep private keys secure even if the devices are in local network that has no administrators.
 
-However, there is no way to use the trust chain based on the vendor-issued certificates on existing Web PKI seamlessly for now. Approach #3 extends a browser API and a related UI to support vendor-issued certificates (generally, private CA issued certificate) in a similar way to Approach #2. Specifically, by extending the fetch API as follows, it enables web services to provide the browsers with private CA certificates or private CA issued certificates as trusted ones.
+However, there is no way to use the trust chain based on the vendor-issued certificates on existing Web PKI seamlessly for now.
+Approach #3 extends a browser API and a related UI to support vendor-issued certificates (generally, private CA issued certificate) in a similar way to Approach #2.
+Specifically, by extending the fetch API as follows, it enables web services to provide the browsers with private CA certificates or private CA issued certificates as trusted ones.
 
 ```javascript
 fetch("https://device.local/stuff", {
@@ -170,11 +184,14 @@ As with approach #1 and #2, the browser shows a following pop-up window when the
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_3_1.png" width="480px">
 </div>
 
- Approach #3 can be built on the top of Approach #2. This means that the AS has a private CA role and the web service trusts a private CA issued certificate based on the pre-registered relationship with the CA/AS. Of course, it is not necessary for the web service to make the trust relationship in advance. The web service can be assumed that it trusts the private CA without any rationale.
+Approach #3 can be built on the top of Approach #2. This means that the AS has a private CA role and the web service trusts a private CA issued certificate based on the pre-registered relationship with the CA/AS. Of course, it is not necessary for the web service to make the trust relationship in advance. The web service can be assumed that it trusts the private CA without any rationale.
 
- In addition, we proposed a method to issue a DV(Domain Validation) certificate for a device at [a breakout session in TPAC 2017][21]. The method is based on the OOB (Out-of-Band) challenge defined in the previous draft of [ACME][22]. The challenge, which is the access to ‘https://device.local/.well-known/acme-challenge/{token}’, is executed by the ACME server’s frontend loaded on a browser that can communicate with the device in local network. Although the challenge through the browser has some advantages (e.g., it can be based on user approval, there is no need to change firewall settings), it requires a fetch API extension for approach #2 that enables the access to the device based on self-signed certificates or RPKs.
+In addition, we proposed a method to issue a DV(Domain Validation) certificate for a device at [a breakout session in TPAC 2017][21].
+The method is based on the OOB (Out-of-Band) challenge defined in the previous draft of [ACME][22].
+The challenge, which is the access to ‘https://device.local/.well-known/acme-challenge/{token}’, is executed by the ACME server’s frontend loaded on a browser that can communicate with the device in local network.
+Although the challenge through the browser has some advantages (e.g., it can be based on user approval, there is no need to change firewall settings), it requires a fetch API extension for approach #2 that enables the access to the device based on self-signed certificates or RPKs.
 
- We are very pleased to hear the comments and reviews on the feasibility of the ACME extension for ‘Let’s Encrypt for devices’.
+We are very pleased to hear the comments and reviews on the feasibility of the ACME extension for ‘Let’s Encrypt for devices’.
 
 ### Requirements for Browsers 
 
@@ -192,11 +209,13 @@ Regarding Approach #3, following technical topics might have to be discussed in 
 
 As for the normal access pattern mentioned above, it is not necessary to extend fetch API. In addtion, the proposals for approach #2 are not useful for the normal access pattern because approach #2 is inherently based on the cross origin access. 
 
-On the other hand, we believe that the UI extensions and additional protocol supports for approach #1 and #3 can also be candidate proposals for the normal access pattern. Of course, there are a few things to consider to apply to the normal access pattern. For example, we have to clarify the means for browsers to get private CA certificates for validating device certificates.
+On the other hand, we believe that the UI extensions and additional protocol supports for approach #1 and #3 can also be candidate proposals for the normal access pattern.
+Of course, there are a few things to consider to apply to the normal access pattern. For example, we have to clarify the means for browsers to get private CA certificates for validating device certificates.
 
 # Conclution
 
-We proposed three approaches to achieve local HTTPS without using public CA certificates. All of them are nothing more than early stage ideas. We’d like to refine the proposal and move forward with the CG activity through open discussions.
+We proposed three approaches to achieve local HTTPS without using public CA certificates.
+All of them are nothing more than early stage ideas. We’d like to refine the proposal and move forward with the CG activity through open discussions.
 
 <!-- References -->
 
