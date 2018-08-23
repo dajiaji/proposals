@@ -1,123 +1,84 @@
-# A Draft Proposal for Local HTTPS
+# Supporting Local HTTPS Communication - A Draft Proposal 
 
-This document describes some technical approaches to achieve HTTPS communications between browsers and local servers that have private domain names such as ‘device.local’ or ‘device.home.arpa’ (hereafter, the local server is simply called ‘device’).
+# 1. Scope
 
-As the proposal is written from the standpoint of the users of browsers, it might not be based on the design policy, security policy, and current implementations of browsers, and also it is just an early stage draft proposal.
-So, we kindly solicit comments on the basic concept and feasibility of the proposal from browser vendors, security and privacy experts, IoT device or web service developers.
+This document describes candidate technical approaches to achieve HTTPS communication between a browser (HTTP client) and a local server (HTTP server) that has private domain names such as ‘server.local’ or ‘server.home.arpa’. For the purpose of this document, we assume that the browser is hosted in a user entity (e.g., Smart Phone) and the local server is hosted in a home device. Therefore, we use the term ‘device’ instead of a local server.
 
-# Introduction
+# 2. Purpose
 
-The backgrounder (e.g., problem statements) behind the proposal is omitted because it has already been described in [the charter of the HTTPS in Local Network Community Group][1] and [the introduction of ‘HTTPS for Local Domains’][2].
+The purpose of this draft proposal is to initiate discussions and receive feedbacks from the W3C members especially from the browser vendors and web developers. Authors of this document are aware that the proposed approaches might not be based on the current design and security policies of the browser implementations but certainly hope that the community will update these policies to cater the need for new emerging markets, such as Internet of Things (IoT).
 
-The motivating use cases are written in [the CG’s github page][3]. Basically, we think there are two device access patterns for local HTTPS as follows:
-- _Normal access pattern_: the device has web contents and a user types the address of the device (e.g., ‘https://device.local’) to the address bar of a browser directly and gets the contents.
-- _Cross-origin access pattern_: the device has API endpoints and a web frontend loaded on a browser from the internet (hereafter, simply called ‘web service’) accesses the APIs with a browser API ([fetch API][4], etc.)
+# 3. Use Cases
 
-Most of the use cases listed on [the github page][3] are based on the latter access pattern because the CG focused on addressing a mixed content problem ([Mixed Content][5]) on the cross-origin access at first.
-Therefore, all of the approaches proposed in later sections are assumed to be applied to the cross-origin access pattern.
-However, some of the approaches can be applied to the normal access pattern and we discuss the topic [later](#consideration-for-normal-access-pattern).
+The motivation and use cases are described in [the charter of the HTTPS in Local Network Community Group (CG)][1]. These use cases are developed under [the charter of the HTTPS in Local Network CG][2]. In general, we can categorize two device access patterns principle for local HTTPS. They are as follows:
+- _Normal access pattern_: the device has web contents and a user types the address of the device (e.g., ‘https://device.local’) on the browser directly and receives the contents.
+- _Cross-origin access pattern_: the device has API endpoints and a web frontend loaded on a browser from the internet (hereafter, simply called ‘web service’) accesses the APIs with a browser API (e.g., [fetch API][3]) and receives the contents.
 
-# Scope of the Proposal and Existing Technologies
+Most of the use cases listed in [the github page][1] however are based on cross-origin access pattern because the Community Group mainly focused on addressing a mixed content problem ([Mixed Content][4]). Therefore, all approaches proposed in this draft are based on the cross-origin access pattern principle although some of the approaches can be applied to the normal access pattern as well. 
 
-There are various means for browsers to allow HTTPS accesses to the devices. In terms of the server authentication, we focus on the following three approaches:
-1.  Password（e.g., ephemeral PIN code displayed on the device）
-2.  Self-singed certificate or raw public key
-3.  Private CA  issued certificate (e.g., device vendor issued certificate)
+# 4. Existing Techniques
 
-On the other hand, we don't discuss the following approaches:
-- Public CA  issued certificate
-- [DANE][6]
+## 4.1. Web PKI-based Approach
 
-The former is the well-known Web PKI approach. [Mozilla's IoT Gateway][7] and [PLEX][8] are known as existing solutions of this approach and each of them can be regarded as one of the best practices to realize the local HTTPS.
-However, public CA cannot issue certificates for local domains such as .local or .home.arpa ([CA Browser Forum Guideline][9]).
-This means that the devices have to use global unique domain names and it brings some drawbacks to the approach as follows:
-- Short and memorable domain names like ‘device.local’ cannot be used.
-- Devices must be accessible from the internet to get DV certificates from public CAs. It can be mitigated by setting routers to allow a specific server (e.g., Let’s Encrypt) to access the devices temporarilly. However, such kind of settings might be difficult for users in some use cases (e.g., for home networks).
-- Accesses to devices will be failed when the internet is down because of the global name resolution, although the accesses are basically done in local networks.
-- Domain names of devices are disclosed globally with their IP addresses. It might be ragarded as a kind of privacy issues.
+In this approach, public CA issues certificates for devices that have a globally unique domain names because public CA cannot issue certificates for local domains such as .local or .home.arpa as described in [CA Browser Forum Guideline][20]. Example current industry best practices of this approach are [Mozilla's IoT Gateway][5] and [PLEX][6]. While these approaches are deployed and fits well in some use cases, they cannot work in scenarios where domains are for example, ‘server.local’ or ‘server.home.arpa’. Moreover, the access to local devices in the first place is an important issue (we understand that this issue can be mitigated by preconfiguring the gateway router/proxy but these settings are difficult to be made available in scenarios such as home networks). The other issue is resolving the domain name when there is no Internet access. Finally, the number of required public CAs is significantly larger than other use cases due to the vast nature of IoT devices.
 
-In addtion to the above, the number of the certificates for the devices can be increasing significantly beyond the number of which the existing CAs have issued before.
-That would also be one of the concerns of this approach. The approaches proposed in this document can be regarded as the means to solve the problem of this approach.
- 
-Ther latter is a [DANE][6]-based approach that uses DNS TLSA records to authenticate TLS servers.
-In particular, DANE allows TLS servers to use ‘domain-issued certificates’ that can be issued by a domain administrator wihout involving a third-party CA.
-That sounds useful for local HTTPS. However, DANE is not supported on browsers so far and the approach also needs DNSSEC support for local network.
-So, we think the approach is not feasible relatively (compared with the proposed approaches below) for now and we desiced to put it on out-of-scope at the time being.
+## 4.2. DANE-based Approach
 
-# Overview of the Proposal
+This approach ([DANE][7]) allows TLS servers to use ‘domain-issued certificates’ that can be issued by a domain administrator without involving a third-party CA. While this technique seems useful for local HTTPS, DANE is not supported in major browsers. In addition, the approach needs DNSSEC support for local network. Therefore, we argue that DANE-based approach is difficult to realize in support of the IoT use cases.
 
-In this section, we describe the outlines of the approach #1, #2, and #3.
+# 5. Overview of the Proposed Technical Approaches
 
-_NOTE: For the following discussion, we use ‘device.local’ as an example of a domain name of a device. Of course, other local domain names (e.g., ‘device.home.arpa’) should be applicable and the name resolution methods shouldn’t be restricted to [mDNS][10]._
+In this section, we describe three technical approaches for communications between a browser (HTTP client) and a local server (HTTP server) that has private domain names.
 
-## Approach #1 (J-PAKE-based Approach)
+_NOTE: For the following discussions, we use ‘device.local’ as an example of a domain name of a device. Of course, other local domain names (e.g., ‘device.home.arpa’) are applicable name which can be resolved but the name resolution methods should not be restricted only to mDNS_.
 
-When a web service (e.g., https://device-user.example.com) accesses a device (e.g., device.local) that has a self-singed certificate via a browser, we think that the most simple approach is that the browser allows the access only if the user grants the access through the UI shown the figure below, which is displayed when fetch API is called for the access.
+## 5.1. Approach #1
 
-<div align="center">
-<img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_1_1.png" width="480px">
-</div>
+This approach is based on the user grant and the use of shared password in which [J-PAKE: Password-Authenticated Key Exchange by Juggling][8] is used for the establishment of a secure end-to-end communication channel between the user device and the local server. It is worthwhile to mention that J-PAKE has already been implemented in [Mbed TLS][9] and also the use of J-PAKE has been discussed in [W3C Second Screen WG][10]. Using the following methods, this approach can be realized:
 
-However, it cannot guarantee whether the ‘device.local’ displayed on the pop-up window is really the same as the domain name of the device which the user intends to grant the access to.
-If an evil device on the local network gets a plausible domain name like ‘printer.local’ upfront and then the proper device has to use a secondary name like ‘printer2.local’, it may be difficult for the user to find such a situation.
-
-Approach #1 resolves this problem by extending a browser API and UI. Specifically, by adding a textbox to input a PIN code to the pop-up window as follows, it makes the users to be able to bind the displayed domain name to the real device.
+A web service (e.g., https://device-user.example.com) accesses a device (e.g., ‘device.local’) via a browser. The browser allows the access only if the user grants the access through the UI shown in the figure below. The UI will be displayed when the underlying fetch API is called for the access and the device successfully performs a TLS handshake using [Elliptic Curve J-PAKE Cipher Suites][11] (or, other PAKE-based cipher suites).
 
 <div align="center">
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_1_2.png" width="480px">
 </div>
 
-Since the PIN code should be short and easy to input from the aspect of usability, we believe that it is a good choice to use [J-PAKE][11], which provides the way to generate and share a cryptographic secure key based on a short password.
-If browsers can support [Elliptic Curve J-PAKE Cipher Suites for TLS][12], the above UI can be implemented in more secure manner.
-In addition, J-PAKE has already been implemented on Firefox and the use of J-PAKE has been discussed in [W3C Second Screen WG][13] too. From this point of view, we believe that the approach is basically practical.
+To make sure that the ‘device.local’ displayed on the pop-up window is really the same as the domain name of the device which the user intends to grant the access to, user inserts either a PIN or password  through the pop-up window.
 
-_NOTE: As [ECJPAKE][12] defines only the way to generate a shared key based on a password,  we have to define a specific way to bind the domain name to the TLS session. For example, using ‘local domain name + fingerprint of the self-signed certificate’ as the TLS server identifier might be one of the solution._
-Supporting J-PAKE, fetch API might have to have an additional parameter that to declare the use fo J-PAKE explicitly as follows.
+The above flow can be achieved by extending the UI with adding the cipher suites in the browser. This will enable binding the displayed domain name to the physical device.
 
-```javascript
-fetch("https://device.local/stuff",
-  {tls: "jpake"})
-.then(res => res.json());
-```
+_NOTE: However, a specific method on how to bind the name to the TLS session needs to be defined to distinguish devices which have the same names as mentioned in [HTTPS for Local Domains][22]. This method is needed for both approaches #2 and #3. For example, using device ‘local domain name + fingerprint in self-signed certificate’ as the TLS server identifier (which is defined in [Elliptic Curve J-PAKE Cipher Suites][11]) can be considered as one of the candidate solutions. The use of self-signed certificate after the first J-PAKE based TLS session needs to be defined as well. This will mitigate the PIN or password entry for subsequent TLS sessions._
 
-Besides using ephemeral PIN code displayed on a device, there are other ways to share a password as follows:
-- Use a secondary communication chanel such as BLE or NFC.
-- Use a static PIN code printed on the device.
+### 5.1.1. Browser Requirements
 
-### Requirements for Browsers 
+The requirements for browsers can be summarized as follows:
+- Support additional cipher suites for J-PAKE.
+- Implement the pop-up window for PIN/Password input.
+- Support a method to use a self-signed certificate after the first J-PACKE-based TLS session.
 
-Regarding Approach #1, the requirements for browsers can be summarized as follows:
-- Support an additional parameter of fetch API (e.g., tls: ‘jpake’)
-- Support additional cipher suites for J-PAKE (TLS\_ECJPAKE\_\* defined in [ECJPAKE][12])
-- Implement the pop-up window shown above.
+### 5.1.2. Dependency to other SDOs
 
-In addition to the above, we might have to consider the way to use a self-signed certificate after the first J-PAKE-based TLS session to mitigate the every-time PIN code input.
-If a TLS server uses ‘the domain name + a fingerprint of the self-signed certificate’ as the server identifier,the browser might be able to trust the self-signed certificate on subsequent TLS sessions, based on the identifier.
+This approach will require work and collaboration with the IETF.
+- [Draft document][11] was an individual submission and it is currently expired. If W3C embraces this solution, the work needs to resumed and completed.
+- A method to bind a domain name to a TLS session over ECJPAKE needs to be specified and standardized.
 
-### Technical Topics for Other SDOs
+## 5.2. Approach #2
 
-Regarding Approach #1, following technical topics might have to be discussed in other SDOs:
-- [ECJPAKE](ECJPAKE): This document is merely an individual submission and it has been expired since two years ago. We don’t know the current status of the document but it might be necessary to resume the standardization activity.
-- A method to bind a domain name to a TLS session over ECJPAKE (As described above, using ‘local domain name + fingerprint of the self-signed certificate’ as the TLS server identifier might be one of the solution).
+In approach #1, there is no trust anchor that can guarantee the authenticity of devices and it is difficult for users to find whether the device is a legitimate one. From the standpoint of web services, it is often argued whether a server authentication should be delegated to a user’s judgement.
 
-## Approach #2 (ACE/OAuth based approach)
-
-Approach #1 basically depends only on user approval. There are no trust anchors that can guarantee the authenticity of devices and it is difficult for users to find whether the device is infected by a malware or not from its appearance.
-From the standpoint of web services, it looks unreliable that a server authentication must be delegated only to the user’s judgement.
-
-Approach #2 resolves this problem by introducing an [ACE][14]/[OAuth][15] AS (Authorization Server) as an authority of the device into the local HTTPS system based on the ACE framework shown the figure below.
+Approach #2 resolves this problem by introducing an [ACE][12] and [OAuth][13] based AS (Authorization Server) as an authority of the device into the local HTTPS system as shown below.
 
 <div align="center">
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_2_1.png" width="480px">
 </div>
 
-The ACE components have following relationships:
-- The device, which is regarded as an RS (Resource Server) in the context of ACE, has a trust relationship with the AS. In our assumption, the AS is basically maintained by the device manufacturer.
+The ACE components have the following relationships:
+- The device, which is regarded as an RS (Resource Server) in the context of ACE, has a trust relationship with the AS. In our assumption, the AS is configured by the device manufacturer.
 - The web server, which is regarded as a client in the context of ACE, has been registered to the AS in advance and has a trust relationship with it.
 - The user, which is regarded as a Resource Owner in the context of ACE, has an account for the AS and the ownership information to device has been registered to the AS in advance.
-Under the relationship, the client can get an access token to access the device based on the user approval. At this time, the client can also get the RS information that includes an URI and an RPK (Raw Public Key) or self-signed certificate of the device (step (B) shown the above). However, existing web browsers don’t permit the access to the device with the access token (step (C)). 
 
-Therefore, Approach #2 extends a browser API and related UI to enable the client to access the device only when the client provides the browser with the RS information (a self-signed certificate or RPK) as a trusted one. The RS information can be sent to the browser as an extended parameter of fetch API as follows:
+Under the above relationships, the client (Web Service) can get an access token to access the device based on user’s approval. At this time, the client can also get the RS information that includes an URI and an [RPK (Raw Public Key)][14] or self-signed certificate of the device (step (B) as shown in above figure). Since the existing web browsers do not permit the access to the device with the access token (step (C) in above figure), browser API and related UI need to be extended to enable the client to access the device only when the client provides the browser with the RS information (a self-signed certificate or RPK) as a trusted one.
+
+The RS information can be sent to the browser as an extended parameter of fetch API as follows:
 
 ```javascript
 // When RS Information includes a RPK, 
@@ -133,43 +94,33 @@ fetch("https://device.local/stuff", {
 .then(res => res.json());
 ```
 
- When the fetch API above is called, the browser shows a following pop-up window.
+When the fetch API above is called, the browser shows a following pop-up window.
 
 <div align="center">
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_2_2.png" width="480px">
 </div>
 
-As the result, HTTPS accesses from the web service to the device are allowed by the browser based on the trust relationship between the client and the AS (and the device) and, user aapproval.
+As the result, HTTPS accesses from the web service to the device are achieved by the browser based on the trust relationship between the client and the AS (and the device) and with user’s explicit approval.
 
-In addtion, Approach #2 has another advantage that the device (RS) has an opportunity to know the client(‘s origin) before the access from the device because, not to mention, the access token is issued before the access.
-This means that the device can use proper CORS settings for the client dynamically. The feasure has an affinity for a secure local cross-origin access method described in [CORS and RFC1918][16].
+In addition, when the trust relationship between AS and the devices is built on attestation keys in TPM (Trusted Platform Module) on the devices, the authenticity of the devices can be enhanced. The use of the attestation keys is applicable to Approach #3 as well.
 
-### Requirements for Browsers 
+### 5.2.1. Browser Requirements
 
-Regarding Approach #2, the requirements for browsers can be summarized as follows:
-- Support additional parameters of Fetch API mentioned above.
-- Support a TLS certificate type and extensions for using RPK defined in [Using RPK in TLS and DTLS][17]
+The requirements for browsers can be summarized as follows:
+- Support additional parameters of fetch API mentioned above.
+- Support a TLS certificate type and extensions for using [RPK][14].
 - Implement the pop-up window shown above.
 
-### Technical Topics for Other SDOs
+### 5.2.2. Dependency to other SDOs
 
-Regarding Approach #2, following technical topics might have to be discussed in other SDOs:
-- HTTPS profile for ACE (or extensions for OAuth): As ACE is basically based on CoAPS/OSCORE, it is necessary for the approach to define HTTPS profile for ACE or to define some extensions under the assumption that the RSs are distributed and deployed in local network.
+This approach will require work and collaboration with the IETF.
+- HTTPS profile for ACE (or extensions for OAuth): Since ACE is based on CoAP/OSCORE, it is necessary to define either a HTTPS profile for ACE or an extension to COAP/OSCORE under the assumption that the RSs are distributed and deployed in local network.
 
-## Approach #3
+## 5.3. Approach #3
 
-Approach #2 can be regarded as an application-layer solution. Therefore, when we want to have a revocation mechanism ready in case that the devices’ severe vulnerability is disclosed, we have to implement it on top of Approach #2. If we can adopt a TLS-layer solution, we can use existing technologies of certificate revocation (CRL, OCSP Stapling, etc.).
+In this approach, the web service trusts a vendor issued private certificate and asks the web browser to pin the certificate as a trusted one (only in the web service’s secure context) based on user grant. The trust can be built as an extension to Approach #2 in which AS has a private CA role and the web service trusts a private CA issued certificate based either on a pre-registered relationship with the CA and AS or by some other means.
 
-We believe that the framework, on which a device vendor validates domain names of the devices and guarantees the authenticity of them, would be useful even if the names are ununique local names.
-Actually, there are some standardization activities related to such a vendor-issued certificte (hereafter, private CA issued certificate).
-For example, [IEEE802.1AR][18] defines IDevID and LdevID that are device identifiers issued by the device manufacturers, and it seems that [PKI Certificate Identifier Format for Devices][19] tries to make the device identifiers be available on the Web PKI.
-In addition, [IETF ANIMA WG][20] has been developing a way to issue LDevID, which is a sort of vendor-issued certificates, based on IDevID.
-Therefore, the vendor-issued certificate can be regarded as an ordinary concept on IoT security and its trust model.
-Furthermore, vendor-issued certificates are useful to guarantee the devices have TPM functionarity, which is a candidate solution to keep private keys secure even if the devices are in local network that has no administrators.
-
-However, there is no way to use the trust chain based on the vendor-issued certificates on existing Web PKI seamlessly for now.
-Approach #3 extends a browser API and a related UI to support vendor-issued certificates (generally, private CA issued certificate) in a similar way to Approach #2.
-Specifically, by extending the fetch API as follows, it enables web services to provide the browsers with private CA certificates or private CA issued certificates as trusted ones.
+This approach can be realized by extending the browser API and related UI in a similar way as shown in Approach #2. Specifically, by extending the fetch API as described below, it enables web services to provide the browsers with private CA certificates or private CA issued certificates as trusted ones.
 
 ```javascript
 fetch("https://device.local/stuff", {
@@ -178,69 +129,91 @@ fetch("https://device.local/stuff", {
 .then(res => res.json());
 ```
 
-As with approach #1 and #2, the browser shows a following pop-up window when the fetch API above is called.
+Similar to earlier approaches, the browser shows a following pop-up window when the fetch API above is called.
 
 <div align="center">
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_3_1.png" width="480px">
 </div>
 
-Approach #3 can be built on the top of Approach #2. This means that the AS has a private CA role and the web service trusts a private CA issued certificate based on the pre-registered relationship with the CA/AS. Of course, it is not necessary for the web service to make the trust relationship in advance. The web service can be assumed that it trusts the private CA without any rationale.
+For this approach, we argue that the framework on which a device vendor validates domain names of the devices and guarantees the authenticity of them would be useful even if the names are local names. A domain-validated certificate can be issued by using the OOB (Out-of-Band) challenge as defined in [the earlier draft of ACME][15]. This was also discussed in [TPAC 2017 breakout session][16]. The challenge, which is the access to ‘https://device.local/.well-known/acme-challenge/{token}’, is executed by the ACME server’s frontend loaded on a browser that can communicate with the device in a local network. Although the challenge through the browser has some advantages (e.g., it can be based on a user grant, there is no need to change the firewall settings), it requires a fetch API extension for approach #2 that enables the access to the device based on self-signed certificates or RPKs.
 
-In addition, we proposed a method to issue a DV(Domain Validation) certificate for a device at [a breakout session in TPAC 2017][21].
-The method is based on the OOB (Out-of-Band) challenge defined in the previous draft of [ACME][22].
-The challenge, which is the access to ‘https://device.local/.well-known/acme-challenge/{token}’, is executed by the ACME server’s frontend loaded on a browser that can communicate with the device in local network.
-Although the challenge through the browser has some advantages (e.g., it can be based on user approval, there is no need to change firewall settings), it requires a fetch API extension for approach #2 that enables the access to the device based on self-signed certificates or RPKs.
+It is important to note that there are other industry efforts on similar concepts as vendor-issued certificate (hereafter, private CA issued certificate). For example, [IEEE802.1AR][17] defines IDevID and LDevID that are device identifiers issued by the device manufacturers, and it seems that [PKI Certificate Identifier Format for Devices][18] tries to make the device identifiers be available on the Web PKI. In addition, [IETF ANIMA WG][19] has discussed the way to issue an LDevID autonomously based on an IDevID. Therefore, we propose that the vendor-issued certificate should be regarded as an accepted mechanism that should be leveraged by the W3C community. 
 
-We are very pleased to hear the comments and reviews on the feasibility of the ACME extension for ‘Let’s Encrypt for devices’.
+### 5.3.1.  Browser Requirements
 
-### Requirements for Browsers 
-
-Regarding Approach #3, the requirements for browsers can be summarized as follows:
+The requirements for browsers can be summarized as follows:
 - Support additional parameters of fetch API mentioned above.
 - Implement the pop-up window shown above.
 
-### Technical Topics for Other SDOs
+### 5.3.2.  Dependency to other SDOs
 
-Regarding Approach #3, following technical topics might have to be discussed in other SDOs:
-- [PKI Certificate Identifier Format for Devices][19]: This has been an individual submission yet.
-- The ACME extension described above.
+This approach will require work and collaboration with the IETF.
+- [PKI Certificate Identifier Format for Devices][18] is currently an individual submission yet. 
+- The ACME extension as described above.
 
-# Consideration for Normal Access Pattern
+## 5.4.  Pros and Cons of the Approaches
 
-As for the normal access pattern mentioned above, it is not necessary to extend fetch API. In addtion, the proposals for approach #2 are not useful for the normal access pattern because approach #2 is inherently based on the cross origin access. 
+###  Approach #1
 
-On the other hand, we believe that the UI extensions and additional protocol supports for approach #1 and #3 can also be candidate proposals for the normal access pattern.
-Of course, there are a few things to consider to apply to the normal access pattern. For example, we have to clarify the means for browsers to get private CA certificates for validating device certificates.
+- Pros 
+    - There is no need for manufactures to deploy and maintain their own servers (AS and/or CA) on the internet.
+    - It is applicable to both access patterns use cases.
+    - There is no need to extend the Fetch API.
+- Cons
+    - There is no trust anchor for web services to trust the devices and their domain names.
+    - A user has to input a PIN /password, or a device has to support a secondary communication channel (e.g., BLE, NFC).
+    - Web browsers need to support PAKE-based cipher suites.
 
-# Conclution
+### Approach #2
 
-We proposed three approaches to achieve local HTTPS without using public CA certificates.
-All of them are nothing more than early stage ideas. We’d like to refine the proposal and move forward with the CG activity through open discussions.
+- Pros
+    - Web services can trust devices as far as they can trust AS for the devices.
+    - If a device can get web service information from the AS, the device can configure proper CORS settings in advance. It means that the approach would be familiar with the secure local cross-origin access method described in [CORS and RFC1918][21]).
+    - The authenticity of devices can be enhanced when the AS authenticate devices based on attestation keys in TPM on the devices.
+- Cons
+    - Manufactures have to deploy and maintain their own servers (AS and/or CA).
+    - Fetch API needs to be extended.
+    - Device domain names are not validated.
+    - Another browser API (for example, which allows a web service to pin a certificate in the context of a specific origin) would be needed to support the normal access pattern use case.
 
-<!-- References -->
+### Approach #3
 
-[1]: https://httpslocal.github.io/cg-charter/
-[2]: https://docs.google.com/document/d/170rFC91jqvpFrKIqG4K8Vox8AL4LeQXzfikBQXYPmzU/edit?usp=sharing
-[3]: https://github.com/httpslocal/usecases
-[4]: https://fetch.spec.whatwg.org/
-[5]: https://www.w3.org/TR/mixed-content/
-[6]: https://tools.ietf.org/html/rfc6698
-[7]: https://iot.mozilla.org/gateway/
-[8]: https://blog.filippo.io/how-plex-is-doing-https-for-all-its-users/
-[9]: https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf
-[10]: https://tools.ietf.org/html/rfc6762
-[11]: https://tools.ietf.org/html/rfc8236
-[12]: https://tools.ietf.org/html/draft-cragie-tls-ecjpake-01
-[13]: https://www.w3.org/2014/secondscreen/
-[14]: https://datatracker.ietf.org/wg/ace/about/
-[15]: https://datatracker.ietf.org/wg/oauth/about/
-[16]: https://wicg.github.io/cors-rfc1918/
-[17]: https://tools.ietf.org/html/rfc7250
-[18]: https://1.ieee802.org/security/802-1ar/
-[19]: https://tools.ietf.org/id/draft-friel-pki-for-devices-00.html
-[20]: https://datatracker.ietf.org/wg/anima/about/
-[21]: https://www.w3.org/wiki/File:TPAC2017_httpslocal-2.pdf
-[22]: https://tools.ietf.org/html/draft-ietf-acme-acme-12
-[HomeArpa]: https://tools.ietf.org/html/rfc8375
-[Voucher]: https://tools.ietf.org/html/rfc8366
+- Pros
+   - Web services can trust devices as far as they can trust private CAs for the devices.
+   - Device domain names can be validated if ACME can be extended for local domain names.
+   - Existing PKI-based methods for managing the lifecycle of certificates can be used (e.g., CRL, OCSP).
+   - If a device can get web service information from the AS which has a private CA role, the device can configure proper CORS settings in advance as with Approach #2.
+   - The authenticity of devices can be enhanced when the CA issues certificates for the devices based on attestation keys in TPM on the devices.
+- Cons   
+   - Manufactures have to deploy and maintain their own servers (AS and/or private CA).
+   - Fetch API needs to be extended.
+   - Another browser API would be needed to support the normal access pattern use case.
 
+# 6. Conclusion
+
+In this document, we introduced three approaches to enable local HTTPS communications that would not require the browsers having public CA certificates. However, these approaches would require browser extensions and other protocol standardization as identified. The motivation came from the industry need of providing HTTPS access to IoT devices, majority of which will not have a global domain name so that the domain name can be verified and a certificate can be issued. We hope that this paper will spur the discussions within the Community Group and in general within the W3C community so that a solution can be developed and standardized.
+
+<!-- # A.  References -->
+
+[1]: https://github.com/httpslocal/usecases
+[2]: https://httpslocal.github.io/cg-charter/
+[3]: https://fetch.spec.whatwg.org/
+[4]: https://www.w3.org/TR/mixed-content/
+[5]: https://iot.mozilla.org/gateway/
+[6]: https://blog.filippo.io/how-plex-is-doing-https-for-all-its-users/
+[7]: https://www.internetsociety.org/resources/deploy360/dane/ 
+[8]: https://tools.ietf.org/html/rfc8236
+[9]: https://www.mbed.com/en/technologies/security/mbed-tls/ 
+[10]: https://www.w3.org/2014/secondscreen/
+[11]: https://tools.ietf.org/html/draft-cragie-tls-ecjpake-01
+[12]: https://datatracker.ietf.org/wg/ace/about/
+[13]: https://datatracker.ietf.org/wg/oauth/about/
+[14]: https://tools.ietf.org/html/rfc7250
+[15]: https://tools.ietf.org/html/draft-ietf-acme-acme-8
+[16]: https://www.w3.org/wiki/File:TPAC2017_httpslocal-2.pdf
+[17]: https://1.ieee802.org/security/802-1ar/
+[18]: https://tools.ietf.org/id/draft-friel-pki-for-devices-00.html
+[19]: https://datatracker.ietf.org/wg/anima/about/
+[20]: https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf
+[21]: https://wicg.github.io/cors-rfc1918/
+[22]: https://docs.google.com/document/d/170rFC91jqvpFrKIqG4K8Vox8AL4LeQXzfikBQXYPmzU/edit?usp=sharing
