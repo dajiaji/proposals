@@ -84,7 +84,7 @@ The RS information can be sent to the browser as an extended parameter of fetch 
 // When RS Information includes a RPK, 
 fetch("https://device.local/stuff", {
   tls: "rpk",
-  certificate: "base64-encoded rpk>"})
+  certificate: "<base64-encoded rpk>"})
 .then(res => res.json());
 
 // When RS Informatin includes a self-signed certificate, 
