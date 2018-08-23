@@ -153,11 +153,41 @@ This approach will require work and collaboration with the IETF.
 
 ## 5.4.  Pros and Cons of the Approaches
 
-| Approaches | Pros                                     | Cons                                      | 
-|:-----------|:-----------------------------------------|:------------------------------------------|
-|\#1|- There is no need for manufactures to deploy and maintain their own servers (AS and/or CA) on the internet.<br>- It is applicable to both access patterns use cases.<br>- There is no need to extend the Fetch API.|- There is no trust anchor for web services to trust the devices and their domain names.<br>- A user has to input a PIN /password, or a device has to support a secondary communication channel (e.g., BLE, NFC).<br>- Web browsers need to support PAKE-based cipher suites.|
-|\#2|- Web services can trust devices as far as they can trust AS for the devices.<br>- If a device can get web service information from the AS, the device can configure proper CORS settings in advance. It means that the approach would be familiar with the secure local cross-origin access method described in [22]).<br>- The authenticity of devices can be enhanced when the AS authenticate devices based on attestation keys in TPM on the devices.<br>- Manufactures have to deploy and maintain their own servers (AS and/or CA).|- Fetch API needs to be extended.<br>- Device domain names are not validated.<br>- Another browser API (for example, which allows a web service to pin a certificate in the context of a specific origin) would be needed to support the normal access pattern use case.|
-|\#3|- Web services can trust devices as far as they can trust private CAs for the devices.<br>- Device domain names can be validated if ACME can be extended for local domain names.- Existing PKI-based methods for managing the lifecycle of certificates can be used (e.g., CRL, OCSP).- If a device can get web service information from the AS which has a private CA role, the device can configure proper CORS settings in advance as with Approach #2.- The authenticity of devices can be enhanced when the CA issues certificates for the devices based on attestation keys in TPM on the devices.<br>- Manufactures have to deploy and maintain their own servers (AS and/or private CA).|- Fetch API needs to be extended.<br>- Another browser API would be needed to support the normal access pattern use case.|
+###  Approach #1
+
+- Pros 
+    - There is no need for manufactures to deploy and maintain their own servers (AS and/or CA) on the internet.
+    - It is applicable to both access patterns use cases.
+    - There is no need to extend the Fetch API.
+- Cons
+    - There is no trust anchor for web services to trust the devices and their domain names.
+    - A user has to input a PIN /password, or a device has to support a secondary communication channel (e.g., BLE, NFC).
+    - Web browsers need to support PAKE-based cipher suites.
+
+### Approach #2
+
+- Pros
+    - Web services can trust devices as far as they can trust AS for the devices.
+    - If a device can get web service information from the AS, the device can configure proper CORS settings in advance. It means that the approach would be familiar with the secure local cross-origin access method described in [22]).
+    - The authenticity of devices can be enhanced when the AS authenticate devices based on attestation keys in TPM on the devices.
+- Cons
+    - Manufactures have to deploy and maintain their own servers (AS and/or CA).
+    - Fetch API needs to be extended.
+    - Device domain names are not validated.
+    - Another browser API (for example, which allows a web service to pin a certificate in the context of a specific origin) would be needed to support the normal access pattern use case.
+
+### Approach #3
+
+- Pros
+   - Web services can trust devices as far as they can trust private CAs for the devices.
+   - Device domain names can be validated if ACME can be extended for local domain names.
+   - Existing PKI-based methods for managing the lifecycle of certificates can be used (e.g., CRL, OCSP).
+   - If a device can get web service information from the AS which has a private CA role, the device can configure proper CORS settings in advance as with Approach #2.
+   - The authenticity of devices can be enhanced when the CA issues certificates for the devices based on attestation keys in TPM on the devices.
+- Cons   
+   - Manufactures have to deploy and maintain their own servers (AS and/or private CA).
+   - Fetch API needs to be extended.
+   - Another browser API would be needed to support the normal access pattern use case.
 
 # 6. Conclusion
 
