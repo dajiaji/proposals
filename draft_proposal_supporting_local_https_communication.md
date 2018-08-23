@@ -131,6 +131,10 @@ fetch("https://device.local/stuff", {
 
 Similar to earlier approaches, the browser shows a following pop-up window when the fetch API above is called.
 
+<div align="center">
+<img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_3_1.png" width="480px">
+</div>
+
 For this approach, we argue that the framework on which a device vendor validates domain names of the devices and guarantees the authenticity of them would be useful even if the names are local names. A domain-validated certificate can be issued by using the OOB (Out-of-Band) challenge as defined in the earlier draft of ACME [15]. This was also discussed in TPAC 2017 breakout session [16]. The challenge, which is the access to ‘https://device.local/.well-known/acme-challenge/{token}’, is executed by the ACME server’s frontend loaded on a browser that can communicate with the device in a local network. Although the challenge through the browser has some advantages (e.g., it can be based on a user grant, there is no need to change the firewall settings), it requires a fetch API extension for approach #2 that enables the access to the device based on self-signed certificates or RPKs.
 
 It is important to note that there are other industry efforts on similar concepts as vendor-issued certificate (hereafter, private CA issued certificate). For example, IEEE802.1AR [17] defines IDevID and LDevID that are device identifiers issued by the device manufacturers, and it seems that PKI Certificate Identifier Format for Devices [18] tries to make the device identifiers be available on the Web PKI. In addition, IETF ANIMA WG [19] has discussed the way to issue an LDevID autonomously based on an IDevID. Therefore, we propose that the vendor-issued certificate should be regarded as an accepted mechanism that should be leveraged by the W3C community. 
@@ -151,28 +155,9 @@ This approach will require work and collaboration with the IETF.
 
 | Approaches | Pros                                     | Cons                                      | 
 |:-----------|:-----------------------------------------|:------------------------------------------|
-|\#1
-|- There is no need for manufactures to deploy and maintain their own servers (AS and/or CA) on the internet.<br>
-- It is applicable to both access patterns use cases.<br>
-- There is no need to extend the Fetch API.<br>
-|- There is no trust anchor for web services to trust the devices and their domain names.<br>
-- A user has to input a PIN /password, or a device has to support a secondary communication channel (e.g., BLE, NFC).<br>
-- Web browsers need to support PAKE-based cipher suites.|
-|\#2
-|- Web services can trust devices as far as they can trust AS for the devices.<br>
-- If a device can get web service information from the AS, the device can configure proper CORS settings in advance. It means that the approach would be familiar with the secure local cross-origin access method described in [22]).<br>
-- The authenticity of devices can be enhanced when the AS authenticate devices based on attestation keys in TPM on the devices. • Manufactures have to deploy and maintain their own servers (AS and/or CA).
-|- Fetch API needs to be extended.<br>
-- Device domain names are not validated.<br>
-- Another browser API (for example, which allows a web service to pin a certificate in the context of a specific origin) would be needed to support the normal access pattern use case.|
-|\#3
-|- Web services can trust devices as far as they can trust private CAs for the devices.<br>
-- Device domain names can be validated if ACME can be extended for local domain names.
-- Existing PKI-based methods for managing the lifecycle of certificates can be used (e.g., CRL, OCSP).
-- If a device can get web service information from the AS which has a private CA role, the device can configure proper CORS settings in advance as with Approach #2.
-- The authenticity of devices can be enhanced when the CA issues certificates for the devices based on attestation keys in TPM on the devices.  • Manufactures have to deploy and maintain their own servers (AS and/or private CA).
-|- Fetch API needs to be extended.
-- Another browser API would be needed to support the normal access pattern use case.|
+|\#1|- There is no need for manufactures to deploy and maintain their own servers (AS and/or CA) on the internet.<br>- It is applicable to both access patterns use cases.<br>- There is no need to extend the Fetch API.|- There is no trust anchor for web services to trust the devices and their domain names.<br>- A user has to input a PIN /password, or a device has to support a secondary communication channel (e.g., BLE, NFC).<br>- Web browsers need to support PAKE-based cipher suites.|
+|\#2|- Web services can trust devices as far as they can trust AS for the devices.<br>- If a device can get web service information from the AS, the device can configure proper CORS settings in advance. It means that the approach would be familiar with the secure local cross-origin access method described in [22]).<br>- The authenticity of devices can be enhanced when the AS authenticate devices based on attestation keys in TPM on the devices.<br>- Manufactures have to deploy and maintain their own servers (AS and/or CA).|- Fetch API needs to be extended.<br>- Device domain names are not validated.<br>- Another browser API (for example, which allows a web service to pin a certificate in the context of a specific origin) would be needed to support the normal access pattern use case.|
+|\#3|- Web services can trust devices as far as they can trust private CAs for the devices.<br>- Device domain names can be validated if ACME can be extended for local domain names.- Existing PKI-based methods for managing the lifecycle of certificates can be used (e.g., CRL, OCSP).- If a device can get web service information from the AS which has a private CA role, the device can configure proper CORS settings in advance as with Approach #2.- The authenticity of devices can be enhanced when the CA issues certificates for the devices based on attestation keys in TPM on the devices.<br>- Manufactures have to deploy and maintain their own servers (AS and/or private CA).|- Fetch API needs to be extended.<br>- Another browser API would be needed to support the normal access pattern use case.|
 
 # 6. Conclusion
 
