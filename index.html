@@ -1214,7 +1214,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version db559f98d6c99655936abc96647a0e88ba98a9cf" name="generator">
   <link href="https://httpslocal.github.io/proposals/" rel="canonical">
-  <meta content="420039258b278731c9b9e6c5c18643473e40d5c8" name="document-revision">
+  <meta content="d679e611df908e34101c4b77b8a6238e038e254e" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1622,7 +1622,7 @@ a TLS handshake using <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPA
     <c- c1>// to identify the local server and to omit user approval.</c->
     pinnedIdentity<c- o>:</c-> <c- u>"&lt;base64-encoded SPKI of the certificate or its fingerprint>"</c-><c- p>}});</c->
 </pre>
-   <div align="center"> <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_1_2.png" width="480px"> </div>
+   <div align="center"> <img src="/figs/fig_approach_1_2.png" width="480px"> </div>
    <p>To make sure that the ‘device.local’ displayed on the pop-up window is really
 the same as the domain name of the <a data-link-type="dfn" href="#device" id="ref-for-device⑧">device</a> which the user intends to grant the access to,
 user inserts either a PIN or password through the pop-up window.</p>
@@ -1656,7 +1656,7 @@ should be delegated to a user’s judgement.</p>
    <p>Approach #2 resolves this problem by introducing an <a data-link-type="biblio" href="#biblio-ace">[ACE]</a> and <a data-link-type="biblio" href="#biblio-oauth">[OAUTH]</a> based
 AS (Authorization Server) as an authority of the <a data-link-type="dfn" href="#device" id="ref-for-device①⓪">device</a> into the local HTTPS
 system as shown below.</p>
-   <div align="center"> <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_2_1.png" width="480px"> </div>
+   <div align="center"> <img src="/figs/fig_approach_2_1.png" width="480px"> </div>
    <p>The ACE components have the following relationships:</p>
    <ul>
     <li data-md>
@@ -1694,7 +1694,7 @@ fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c-
     pinnedIdentity<c- o>:</c-> <c- u>"&lt;base64-encoded SPKI of the certificate or its fingerprint>"</c-><c- p>}});</c->
 </pre>
    <p>When the fetch API above is called, the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⓪">UA</a> shows a following pop-up window.</p>
-   <div align="center"> <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_2_2.png" width="480px"> </div>
+   <div align="center"> <img src="/figs/fig_approach_2_2.png" width="480px"> </div>
    <p>As the result, HTTPS accesses from the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service①">web service</a> to the <a data-link-type="dfn" href="#device" id="ref-for-device①⑥">device</a> are achieved
 by the <a data-link-type="dfn" href="#ua" id="ref-for-ua①①">UA</a> based on the trust relationship between the client and the AS (and the device)
 and with user’s explicit approval.</p>
@@ -1737,7 +1737,7 @@ certificates or <a data-link-type="dfn" href="#private-ca" id="ref-for-private-c
 </pre>
    <p>Similar to earlier approaches, the <a data-link-type="dfn" href="#ua" id="ref-for-ua①③">UA</a> shows a following pop-up window
 when the fetch API above is called.</p>
-   <div align="center"> <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_3_1.png" width="480px"> </div>
+   <div align="center"> <img src="/figs/fig_approach_3_1.png" width="480px"> </div>
    <p>For this approach, we argue that the framework on which a device vendor
 validates domain names of the devices and guarantees the authenticity
 of them would be useful even if the names are local names.
