@@ -112,7 +112,7 @@ fetch("https://device.local/stuff", {
 ```
 
 <div align="center">
-<img src="/figs/fig_approach_1_2.png" width="480px">
+<img src="figs/fig_approach_1_2.png" width="480px">
 </div>
 
 To make sure that the ‘device.local’ displayed on the pop-up window is really
@@ -150,7 +150,7 @@ AS (Authorization Server) as an authority of the [=device=] into the local HTTPS
 system as shown below.
 
 <div align="center">
-<img src="/figs/fig_approach_2_1.png" width="480px">
+<img src="figs/fig_approach_2_1.png" width="480px">
 </div>
 
 The ACE components have the following relationships:
@@ -192,7 +192,7 @@ fetch("https://device.local/stuff", {
 When the fetch API above is called, the [=UA=] shows a following pop-up window.
 
 <div align="center">
-<img src="/figs/fig_approach_2_2.png" width="480px">
+<img src="figs/fig_approach_2_2.png" width="480px">
 </div>
 
 As the result, HTTPS accesses from the [=web service=] to the [=device=] are achieved
@@ -242,7 +242,7 @@ Similar to earlier approaches, the [=UA=] shows a following pop-up window
 when the fetch API above is called.
 
 <div align="center">
-<img src="/figs/fig_approach_3_1.png" width="480px">
+<img src="figs/fig_approach_3_1.png" width="480px">
 </div>
 
 For this approach, we argue that the framework on which a device vendor
