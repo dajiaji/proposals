@@ -36,7 +36,16 @@ _NOTE: For the following discussions, we use ‘device.local’ as an example of
 
 This approach is based on the user grant and the use of shared password in which [J-PAKE: Password-Authenticated Key Exchange by Juggling][8] is used for the establishment of a secure end-to-end communication channel between the user device and the local server. It is worthwhile to mention that J-PAKE has already been implemented in [Mbed TLS][9] and also the use of J-PAKE has been discussed in [W3C Second Screen WG][10]. Using the following methods, this approach can be realized:
 
-A web service (e.g., https://device-user.example.com) accesses a device (e.g., ‘device.local’) via a browser. The browser allows the access only if the user grants the access through the UI shown in the figure below. The UI will be displayed when the underlying fetch API is called for the access and the device successfully performs a TLS handshake using [Elliptic Curve J-PAKE Cipher Suites][11] (or, other PAKE-based cipher suites).
+A web service (e.g., https://device-user.example.com) accesses a device (e.g., ‘device.local’) via a browser. The browser allows the access only if the user grants the access through the UI shown in the figure below. The UI will be displayed when the underlying fetch API is called for the access with the extension below and the device successfully performs a TLS handshake using [Elliptic Curve J-PAKE Cipher Suites][11] (or, other PAKE-based cipher suites).
+
+```javascript
+fetch("https://device.local/stuff", {
+  tlsExtension: { // available only for local servers?
+    type: "pake",
+    // optional argument for subsequent TLS sessions to identify the local server and to omit user approval.
+    pinnedIdentity: "<base64-encoded SPKI of the certificate provided by the local server over the first PAKE-based TLS session, or its fingerprint>"}})
+.then(res => res.json());
+```
 
 <div align="center">
 <img src="https://github.com/dajiaji/proposals/blob/figures/figs/fig_approach_1_2.png" width="480px">
@@ -83,14 +92,16 @@ The RS information can be sent to the browser as an extended parameter of fetch 
 ```javascript
 // When RS Information includes a RPK, 
 fetch("https://device.local/stuff", {
-  tls: "rpk",
-  certificate: "<base64-encoded rpk>"})
+  tlsExtension: {
+    type: "rpk",
+    pinnedIdentity: "<base64-encoded raw public key or its fingerprint>"}})
 .then(res => res.json());
 
 // When RS Informatin includes a self-signed certificate, 
 fetch("https://device.local/stuff", {
-  tls: "pkix", // default value that can be omitted.
-  certificate: "<base64-encoded certificate or its fingerprint>"})
+  tlsExtension: {
+    type: "pkix", // default value that can be omitted.
+    pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}})
 .then(res => res.json());
 ```
 
@@ -124,8 +135,9 @@ This approach can be realized by extending the browser API and related UI in a s
 
 ```javascript
 fetch("https://device.local/stuff", {
-  tls: "pkix", // default value that can be omitted.
-  certificate: "<base64-encoded certificate or its fingerprint>"})
+  tlsExtension: { // available only for local server.
+    type: "pkix", // default value that can be omitted.
+    pinnedIdentity: "<base64-encoded SPKI of the vendor CA certificate or its fingerprint>"}})
 .then(res => res.json());
 ```
 
