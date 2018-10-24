@@ -43,7 +43,7 @@ fetch("https://device.local/stuff", {
   tlsExtension: { // available only for local servers?
     type: "pake",
     // optional argument for subsequent TLS sessions to identify the local server and to omit user approval.
-    pinnedIdentity: "<base64-encoded SPKI of the certificate provided by the local server over the first PAKE-based TLS session, or its fingerprint>"}})
+    pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}})
 .then(res => res.json());
 ```
 
