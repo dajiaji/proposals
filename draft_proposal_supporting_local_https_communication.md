@@ -135,7 +135,7 @@ This approach can be realized by extending the browser API and related UI in a s
 
 ```javascript
 fetch("https://device.local/stuff", {
-  tlsExtension: { // available only for local server.
+  tlsExtension: {
     type: "pkix", // default value that can be omitted.
     pinnedIdentity: "<base64-encoded SPKI of the vendor CA certificate or its fingerprint>"}})
 .then(res => res.json());
