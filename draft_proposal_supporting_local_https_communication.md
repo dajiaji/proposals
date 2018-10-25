@@ -44,8 +44,7 @@ fetch("https://device.local/stuff", {
     type: "pake",
     // Following is an optional argument for subsequent TLS sessions
     // to identify the local server and to omit user approval.
-    pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}})
-.then(res => res.json());
+    pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}});
 ```
 
 <div align="center">
@@ -95,15 +94,13 @@ The RS information can be sent to the browser as an extended parameter of fetch 
 fetch("https://device.local/stuff", {
   tlsExtension: {
     type: "rpk",
-    pinnedIdentity: "<base64-encoded raw public key or its fingerprint>"}})
-.then(res => res.json());
+    pinnedIdentity: "<base64-encoded raw public key or its fingerprint>"}});
 
 // When RS Informatin includes a self-signed certificate, 
 fetch("https://device.local/stuff", {
   tlsExtension: {
     type: "pkix", // default value that can be omitted.
-    pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}})
-.then(res => res.json());
+    pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}});
 ```
 
 When the fetch API above is called, the browser shows a following pop-up window.
@@ -138,8 +135,7 @@ This approach can be realized by extending the browser API and related UI in a s
 fetch("https://device.local/stuff", {
   tlsExtension: {
     type: "pkix", // default value that can be omitted.
-    pinnedIdentity: "<base64-encoded SPKI of the vendor CA certificate or its fingerprint>"}})
-.then(res => res.json());
+    pinnedIdentity: "<base64-encoded SPKI of the vendor CA certificate or its fingerprint>"}});
 ```
 
 Similar to earlier approaches, the browser shows a following pop-up window when the fetch API above is called.
