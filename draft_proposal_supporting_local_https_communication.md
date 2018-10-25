@@ -34,15 +34,16 @@ _NOTE: For the following discussions, we use ‘device.local’ as an example of
 
 ## 5.1. Approach #1
 
-This approach is based on the user grant and the use of shared password in which [J-PAKE: Password-Authenticated Key Exchange by Juggling][8] is used for the establishment of a secure end-to-end communication channel between the user device and the local server. It is worthwhile to mention that J-PAKE has already been implemented in [Mbed TLS][9] and also the use of J-PAKE has been discussed in [W3C Second Screen WG][10]. Using the following methods, this approach can be realized:
+This approach is based on the user grant and the use of shared password in which [PAKE(J-PAKE, etc.)][8] is used for the establishment of a secure end-to-end communication channel between the user device and the local server. It is worthwhile to mention that J-PAKE has already been implemented in [Mbed TLS][9] and also the use of J-PAKE has been discussed in [W3C Second Screen WG][10]. Using the following methods, this approach can be realized:
 
 A web service (e.g., https://device-user.example.com) accesses a device (e.g., ‘device.local’) via a browser. The browser allows the access only if the user grants the access through the UI shown in the figure below. The UI will be displayed when the underlying fetch API is called for the access with the extension below and the device successfully performs a TLS handshake using [Elliptic Curve J-PAKE Cipher Suites][11] (or, other PAKE-based cipher suites).
 
 ```javascript
 fetch("https://device.local/stuff", {
-  tlsExtension: { // available only for local servers?
+  tlsExtension: { // Should this be available only to local servers?
     type: "pake",
-    // optional argument for subsequent TLS sessions to identify the local server and to omit user approval.
+    // Following is an optional argument for subsequent TLS sessions
+    // to identify the local server and to omit user approval.
     pinnedIdentity: "<base64-encoded SPKI of the certificate or its fingerprint>"}})
 .then(res => res.json());
 ```
