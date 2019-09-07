@@ -1,23 +1,46 @@
 <pre class='metadata'>
-Title: Possible Solutions for HTTPS in Local Network
-Shortname: httpslocal-solutions
+Title: Possible Approaches for HTTPS in Local Network
+Shortname: httpslocal-possible-approaches
 Level: 1
 Status: CG-DRAFT
 Group: httpslocal
 URL: https://httpslocal.github.io/proposals/
 Editor: Contributors on GitHub, https://github.com/httpslocal/proposals/graphs/contributors
-Abstract: This document describes possible solutions for web browsers to communicate with HTTPS servers in local network.
-Repository: https://github.com/httpslocal/usecases
+Abstract: This document describes possible approaches for browsers to communicate with HTTPS servers in local network.
+    All of the approaches in this document are not feasible on existing web standards for
+    the browser and/or related communication protocols and systems. Therefore, this document
+    describes not only the explanation of each approach itself but also related requirements for the browser,
+    and required standardization activities on the communication protocols and systems.
+Repository: https://github.com/httpslocal/proposals
 Markup Shorthands: markdown yes
 </pre>
 
 Introduction {#intro}
 =====================
 
-This document describes candidate technical approaches to achieve HTTPS communication
-between a web browser and a HTTPS server-capable device in local network.
+By tradition, diverse kinds of connected devices have HTTP server functionality
+to provide their users with web-based UIs. Since such kind of devices in local network
+cannot easily get valid server certificates, most of the devices have to use non-secure HTTP.
 
-The purpose of this draft proposal is to initiate discussions and receive feedbacks
+On the other hand, recently, using HTTPS is getting popular rapidly on the internet
+due to various efforts to make the internet secure, such as [[LETS-ENCRYPT]].
+Following the trend, browsers' security policy have been enhanced gradually to deprecate insecure HTTP.
+For example, new features on browsers are supposed to be restricted only to [[SECURE-CONTEXT]].
+
+As the result, browsers came to show negative security indicators when the devices are
+accessed by their users. The browsers also prevent web applications in secure contexts
+from accessing and collaborating with the devices. In addition, the devices cannot use
+[[POWERFUL-FEATURES]] on their web-based UIs. The local devices have been marginalized
+in the current secure web.
+
+Considering the background, this document describes possible technical approaches for
+browsers to communicate with HTTPS servers in local network. All of the approaches
+in this document are not feasible on existing web standards for the browser and/or
+related communication protocols and systems. Therefore, this document describes not
+only the explanation of each approach itself but also related requirements for the browser,
+and required standardization activities on the communication protocols and systems.
+
+The purpose of this document is to initiate discussions and receive feedbacks
 from the W3C members especially from the browser vendors and web developers.
 Authors of this document are aware that the proposed approaches might not be based
 on the current design and security policies of the browser implementations but certainly
@@ -27,7 +50,7 @@ such as Internet of Things (IoT).
 Terminology {#terminology}
 ==========================
 
-A <dfn>UA</dfn> (User Agent) is a web browser on a user’s PC, smartphone, tablet
+A <dfn>UA</dfn> (User Agent) is a browser on a user’s PC, smartphone, tablet
 and so on, which is connected to a local network.
 
 A <dfn>device</dfn> is in the same local network as the [=UA=], capable of HTTPS/WSS server.
@@ -45,8 +68,8 @@ A <dfn>public CA</dfn> is a CA responsible for issuing the [=Web PKI certificate
 
 A <dfn>private CA</dfn> is a CA responsible for issuing the [=non-Web PKI certificate=]s.
 
-Use Cases {#usecases}
-=====================
+Scope {#scope}
+==============
 
 The motivation and use cases are described in [[HTTPSLOCAL-USECASES]].
 In general, we can categorize two [=device=] access patterns principle for local HTTPS.
@@ -59,12 +82,16 @@ They are as follows:
 
 All approaches proposed in this draft are based on either one or both of the access patterns.
 
-Possible Solutions {#possible-solutions}
-========================================
+Existing Techniques {#existing-techniques}
+==========================================
 
-ISSUE: Refine the structure of this section. Do we need to categorize the solutions based on the access patterns described the previous section?
 
-## Web PKI based Solutions ## {#web-pki-solutions}
+Possible Approaches {#possible-approaches}
+==========================================
+
+ISSUE: Refine the structure of this section. Do we need to categorize the approaches based on the access patterns described the previous section?
+
+## Web PKI based Apporaches ## {#web-pki-approaches}
 
 In this approach, [=public CA=] issues certificates for devices that have a globally
 unique domain names because [=public CA=] cannot issue certificates for local domains
@@ -80,14 +107,14 @@ such as home networks). The other issue is resolving the domain name when there
 is no Internet access. Finally, the number of required public CAs is significantly
 larger than other use cases due to the vast nature of IoT devices.
 
-## non-Web PKI based Solutions ## {#non-web-pki-solutions}
+## non-Web PKI based Approaches ## {#non-web-pki-approaches}
 
 In this section, we describe three technical approaches for communications
 between a [=UA=] and a local server that has private domain names.
 
 NOTE: For the following discussions, we use ‘device.local’ as an example of a domain name of a device. Of course, other local domain names (e.g., ‘device.home.arpa’) are applicable name which can be resolved but the name resolution methods should not be restricted only to mDNS.
 
-### Approach 1 ### {#approach-1}
+### [<dfn>APPROACH-1</dfn>] ### {#approach-1}
 
 This approach is based on the user grant and the use of shared password in
 which [[PAKE]](J-PAKE, etc.) is used for the establishment of a secure
@@ -167,7 +194,7 @@ Under the above relationships, the client (Web Service) can get an access token
 to access the [=device=] based on user’s approval. At this time, the client can also
 get the RS information that includes an URI and an [[RPK]] (Raw Public Key)
 or self-signed certificate of the [=device=] (step (B) as shown in above figure).
-Since the existing web browsers do not permit the access to the [=device=] with
+Since the existing browsers do not permit the access to the [=device=] with
 the access token (step (C) in above figure), browser API and related UI
 need to be extended to enable the client to access the [=device=] only when the client
 provides the [=UA=] with the RS information (a self-signed certificate or RPK)
@@ -301,7 +328,7 @@ This approach will require work and collaboration with the IETF.
 
 - Pros
     - Web services can trust devices as far as they can trust AS for the devices.
-    - If a [=device=] can get [=web service=] information from the AS, 
+    - If a [=device=] can get [=web service=] information from the AS,
         the [=device=] can configure proper CORS settings in advance.
         It means that the approach would be familiar with the secure
         local cross-origin access method described in [[CORS-AND-RFC1918]]).
