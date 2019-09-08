@@ -1214,7 +1214,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version db559f98d6c99655936abc96647a0e88ba98a9cf" name="generator">
   <link href="https://httpslocal.github.io/proposals/" rel="canonical">
-  <meta content="f9e5bb2b8a9d34ce8185ed1de2ac1075885ad0b8" name="document-revision">
+  <meta content="9e91f27b1de23272613ced8c50f58db0b037bda1" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1461,26 +1461,30 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Possible Solutions for HTTPS in Local Network</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Draft Community Group Report, <time class="dt-updated" datetime="2018-09-05">5 September 2018</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Draft Community Group Report, <time class="dt-updated" datetime="2019-09-08">8 September 2019</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
      <dd><a class="u-url" href="https://httpslocal.github.io/proposals/">https://httpslocal.github.io/proposals/</a>
      <dt>Issue Tracking:
-     <dd><a href="https://github.com/httpslocal/usecases/issues/">GitHub</a>
-     <dd><a href="#issues-index">Inline In Spec</a>
+     <dd><a href="https://github.com/httpslocal/proposals/issues/">GitHub</a>
      <dt class="editor">Editor:
      <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="https://github.com/httpslocal/proposals/graphs/contributors">Contributors on GitHub</a>
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2018 the Contributors to the Possible Solutions for HTTPS in Local Network Specification, published by the <a href="https://www.w3.org/community/httpslocal/">HTTPS in Local Network Community Group</a> under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>.
+   <p class="copyright" data-fill-with="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2019 the Contributors to the Possible Solutions for HTTPS in Local Network Specification, published by the <a href="https://www.w3.org/community/httpslocal/">HTTPS in Local Network Community Group</a> under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>.
 A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/">summary</a> is available. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
-   <p>This document describes possible solutions for web browsers to communicate with HTTPS servers in local network.</p>
+   <p>This document describes possible solutions for browsers to communicate with HTTPS servers in local network.
+
+    All of the solutions in this document are not feasible on existing web standards for
+    the browser and/or related communication protocols and systems. Therefore, this document
+    describes not only the explanation of each solution itself but also related requirements for the browser,
+    and required standardization activities on the communication protocols and systems.</p>
   </div>
   <div data-fill-with="at-risk"></div>
   <h2 class="no-num no-toc no-ref heading settled" id="status"><span class="content">Status of this document</span></h2>
@@ -1499,42 +1503,62 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <ol class="toc" role="directory">
     <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
     <li><a href="#terminology"><span class="secno">2</span> <span class="content">Terminology</span></a>
-    <li><a href="#usecases"><span class="secno">3</span> <span class="content">Use Cases</span></a>
     <li>
-     <a href="#possible-solutions"><span class="secno">4</span> <span class="content">Possible Solutions</span></a>
+     <a href="#scope"><span class="secno">3</span> <span class="content">Scope</span></a>
      <ol class="toc">
-      <li><a href="#web-pki-solutions"><span class="secno">4.1</span> <span class="content">Web PKI based Solutions</span></a>
+      <li><a href="#target-devices"><span class="secno">3.1</span> <span class="content">Target <span>Devices</span></span></a>
+      <li><a href="#target-local-networks"><span class="secno">3.2</span> <span class="content">Target Local Networks</span></a>
+      <li><a href="#target-access-patterns"><span class="secno">3.3</span> <span class="content">Target Access Patterns</span></a>
+     </ol>
+    <li>
+     <a href="#existing-solutions"><span class="secno">4</span> <span class="content">Existing Solutions</span></a>
+     <ol class="toc">
+      <li><a href="#existing-sol-1"><span class="secno">4.1</span> <span class="content">Web PKI based Solutions</span></a>
+      <li><a href="#existing-sol-2"><span class="secno">4.2</span> <span class="content">Non-Web PKI based Solutions</span></a>
+     </ol>
+    <li>
+     <a href="#possible-solutions"><span class="secno">5</span> <span class="content">Possible Solutions</span></a>
+     <ol class="toc">
       <li>
-       <a href="#non-web-pki-solutions"><span class="secno">4.2</span> <span class="content">non-Web PKI based Solutions</span></a>
+       <a href="#web-pki-solutions"><span class="secno">5.1</span> <span class="content">Web PKI based Solutions</span></a>
+       <ol class="toc">
+        <li><a href="#sol-1"><span class="secno">5.1.1</span> <span class="content">SOL-1: Using Name Constraints Certificates</span></a>
+       </ol>
+      <li>
+       <a href="#non-web-pki-solutions"><span class="secno">5.2</span> <span class="content">Non-Web PKI based Solutions</span></a>
        <ol class="toc">
         <li>
-         <a href="#approach-1"><span class="secno">4.2.1</span> <span class="content">Approach 1</span></a>
+         <a href="#sol-2"><span class="secno">5.2.1</span> <span class="content">SOL-2: Using Shared Secret</span></a>
          <ol class="toc">
-          <li><a href="#requirements-1"><span class="secno">4.2.1.1</span> <span class="content">Browser Requirements</span></a>
-          <li><a href="#dependency-1"><span class="secno">4.2.1.2</span> <span class="content">Dependency to other SDOs</span></a>
+          <li><a href="#sol-2-nap"><span class="secno">5.2.1.1</span> <span class="content"><span>Normal Access Pattern</span></span></a>
+          <li><a href="#sol-2-coap"><span class="secno">5.2.1.2</span> <span class="content"><span>Cross-Origin Access Pattern</span></span></a>
+          <li><a href="#requirements-2"><span class="secno">5.2.1.3</span> <span class="content">Browser Requirements</span></a>
+          <li><a href="#dependency-2"><span class="secno">5.2.1.4</span> <span class="content">Dependency to other SDOs</span></a>
          </ol>
         <li>
-         <a href="#approach-2"><span class="secno">4.2.2</span> <span class="content">Approach 2</span></a>
+         <a href="#sol-3"><span class="secno">5.2.2</span> <span class="content">SOL-3: Using Application Layer Access Token</span></a>
          <ol class="toc">
-          <li><a href="#requirements-2"><span class="secno">4.2.2.1</span> <span class="content">Browser Requirements</span></a>
-          <li><a href="#dependency-2"><span class="secno">4.2.2.2</span> <span class="content">Dependency to other SDOs</span></a>
+          <li><a href="#sol-3-coap"><span class="secno">5.2.2.1</span> <span class="content"><span>Cross-Origin Access Pattern</span></span></a>
+          <li><a href="#requirements-3"><span class="secno">5.2.2.2</span> <span class="content">Browser Requirements</span></a>
+          <li><a href="#dependency-3"><span class="secno">5.2.2.3</span> <span class="content">Dependency to other SDOs</span></a>
          </ol>
         <li>
-         <a href="#approach-3"><span class="secno">4.2.3</span> <span class="content">Approach 3</span></a>
+         <a href="#sol-4"><span class="secno">5.2.3</span> <span class="content">SOL-4: Using Device Authority-Issued Certificate</span></a>
          <ol class="toc">
-          <li><a href="#requirements-3"><span class="secno">4.2.3.1</span> <span class="content">Browser Requirements</span></a>
-          <li><a href="#dependency-3"><span class="secno">4.2.3.2</span> <span class="content">Dependency to other SDOs</span></a>
+          <li><a href="#requirements-4"><span class="secno">5.2.3.1</span> <span class="content">Browser Requirements</span></a>
+          <li><a href="#dependency-4"><span class="secno">5.2.3.2</span> <span class="content">Dependency to other SDOs</span></a>
          </ol>
        </ol>
       <li>
-       <a href="#pros-cons"><span class="secno">4.3</span> <span class="content">Pros and Cons of the Approaches</span></a>
+       <a href="#pros-cons"><span class="secno">5.3</span> <span class="content">Pros and Cons of the Solutions</span></a>
        <ol class="toc">
-        <li><a href="#proscons-1"><span class="secno">4.3.1</span> <span class="content">Approach #1</span></a>
-        <li><a href="#proscons-2"><span class="secno">4.3.2</span> <span class="content">Approach #2</span></a>
-        <li><a href="#proscons-3"><span class="secno">4.3.3</span> <span class="content">Approach #3</span></a>
+        <li><a href="#proscons-1"><span class="secno">5.3.1</span> <span class="content">SOL-1</span></a>
+        <li><a href="#proscons-2"><span class="secno">5.3.2</span> <span class="content">SOL-2</span></a>
+        <li><a href="#proscons-3"><span class="secno">5.3.3</span> <span class="content">SOL-3</span></a>
+        <li><a href="#proscons-4"><span class="secno">5.3.4</span> <span class="content">SOL-4</span></a>
        </ol>
      </ol>
-    <li><a href="#conclusion"><span class="secno">5</span> <span class="content">Conclusion</span></a>
+    <li><a href="#conclusion"><span class="secno">6</span> <span class="content">Conclusion</span></a>
     <li><a href="#conformance"><span class="secno"></span> <span class="content"> Conformance</span></a>
     <li>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
@@ -1547,116 +1571,227 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
       <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
      </ol>
-    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ol>
   </nav>
   <main>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
-   <p>This document describes candidate technical approaches to achieve HTTPS communication
-between a web browser and a HTTPS server-capable device in local network.</p>
-   <p>The purpose of this draft proposal is to initiate discussions and receive feedbacks
+   <p>By tradition, diverse kinds of connected devices have HTTP server functionality
+to provide their users with web-based UIs. Since such kind of devices in local network
+cannot easily get valid server certificates, most of the devices have to use non-secure HTTP.</p>
+   <p>On the other hand, recently, using HTTPS is getting popular rapidly on the internet
+due to various efforts to make the internet secure, such as <a data-link-type="biblio" href="#biblio-lets-encrypt">[LETS-ENCRYPT]</a>.
+Following the trend, browsers' security policies have been enhanced gradually to deprecate insecure HTTP.
+For example, new features on browsers are supposed to be restricted only to <a data-link-type="biblio" href="#biblio-secure-contexts">[SECURE-CONTEXTS]</a>.</p>
+   <p>As the result, browsers came to show negative security indicators when the devices are
+accessed by their users. Browsers also prevent web applications in secure contexts
+from accessing and collaborating with the devices. In addition, the devices cannot use
+powerful features (<a data-link-type="biblio" href="#biblio-secure-contexts">[SECURE-CONTEXTS]</a>) on their web-based UIs.
+The local devices have been marginalized in the current secure web.</p>
+   <p>In this document, we propose comprehensive possible solutions to address the problem
+on using HTTPS in local network. All of the solutions in this document are
+not feasible on existing web standards for the browser and/or related communication
+protocols and systems. Therefore, this document describes not only the explanation
+of each solution itself but also related requirements for the browser,
+and required standardization activities on the communication protocols and systems.</p>
+   <p>The purpose of this document is to initiate discussions and receive feedbacks
 from the W3C members especially from the browser vendors and web developers.
-Authors of this document are aware that the proposed approaches might not be based
-on the current design and security policies of the browser implementations but certainly
-hope that the community will update these policies to cater the need for new emerging markets,
-such as Internet of Things (IoT).</p>
+Authors of this document are aware that the proposed solutions might not be based
+on the current design and security policies of the browser implementations
+but certainly hope that the community will update these policies to cater
+the need for new emerging markets, such as Internet of Things (IoT).</p>
    <h2 class="heading settled" data-level="2" id="terminology"><span class="secno">2. </span><span class="content">Terminology</span><a class="self-link" href="#terminology"></a></h2>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ua">UA</dfn> (User Agent) is a web browser on a user’s PC, smartphone, tablet
-and so on, which is connected to a local network.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="device">device</dfn> is in the same local network as the <a data-link-type="dfn" href="#ua" id="ref-for-ua">UA</a>, capable of HTTPS/WSS server.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="local-network">local network</dfn> is a network defined in <a href="#target-local-networks">§3.2 Target Local Networks</a></p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ua">UA</dfn> (User Agent) is a browser on a user’s PC, smartphone, tablet
+and so on, which is connected to a <a data-link-type="dfn" href="#local-network" id="ref-for-local-network">local network</a>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="device">device</dfn> is in the same <a data-link-type="dfn" href="#local-network" id="ref-for-local-network①">local network</a> as the <a data-link-type="dfn" href="#ua" id="ref-for-ua">UA</a>, capable of HTTPS/WSS server.</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="web-service">web service</dfn> is a service hosted on the internet and whose frontend is
-loaded on the <a data-link-type="dfn" href="#ua" id="ref-for-ua①">UA</a>, which accesses to the <a data-link-type="dfn" href="#device" id="ref-for-device">device</a> with HTTPS or WSS on the local network.</p>
+loaded on the <a data-link-type="dfn" href="#ua" id="ref-for-ua①">UA</a>, which accesses to the <a data-link-type="dfn" href="#device" id="ref-for-device">device</a> with HTTPS or WSS on the <a data-link-type="dfn" href="#local-network" id="ref-for-local-network②">local network</a>.</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="web-pki-certificate">Web PKI certificate</dfn> is a TLS server certificate that can chain up to
 a root CA (Certificate Authority) trusted by the <a data-link-type="dfn" href="#ua" id="ref-for-ua②">UA</a> (preinstalled on the <a data-link-type="dfn" href="#ua" id="ref-for-ua③">UA</a>).</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="non-web-pki-certificate">non-Web PKI certificate</dfn> is a TLS server certificate that cannot chain
 up to a root CA, or a self-signed certificate.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="public-ca">public CA</dfn> is a CA responsible for issuing the <a data-link-type="dfn" href="#web-pki-certificate" id="ref-for-web-pki-certificate">Web PKI certificate</a>s.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="private-ca">private CA</dfn> is a CA responsible for issuing the <a data-link-type="dfn" href="#non-web-pki-certificate" id="ref-for-non-web-pki-certificate">non-Web PKI certificate</a>s.</p>
-   <h2 class="heading settled" data-level="3" id="usecases"><span class="secno">3. </span><span class="content">Use Cases</span><a class="self-link" href="#usecases"></a></h2>
-   <p>The motivation and use cases are described in <a data-link-type="biblio" href="#biblio-httpslocal-usecases">[HTTPSLOCAL-USECASES]</a>.
-In general, we can categorize two <a data-link-type="dfn" href="#device" id="ref-for-device①">device</a> access patterns principle for local HTTPS.
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="public-ca">public CA</dfn> is a CA responsible for issuing the <a data-link-type="dfn" href="#web-pki-certificate" id="ref-for-web-pki-certificate">Web PKI certificates</a>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="private-ca">private CA</dfn> is a CA responsible for issuing the <a data-link-type="dfn" href="#non-web-pki-certificate" id="ref-for-non-web-pki-certificate">non-Web PKI certificates</a>.</p>
+   <h2 class="heading settled" data-level="3" id="scope"><span class="secno">3. </span><span class="content">Scope</span><a class="self-link" href="#scope"></a></h2>
+   <p>The solutions proposed in <a href="#possible-solutions">§5 Possible Solutions</a> are based on the use cases
+and the requirements defined in <a data-link-type="biblio" href="#biblio-httpslocal-usecases">[HTTPSLOCAL-USECASES]</a>.</p>
+   <h3 class="heading settled" data-level="3.1" id="target-devices"><span class="secno">3.1. </span><span class="content">Target <a data-link-type="dfn" href="#device" id="ref-for-device①">Devices</a></span><a class="self-link" href="#target-devices"></a></h3>
+   <p>To focus on the problem on using HTTPS in <a data-link-type="dfn" href="#local-network" id="ref-for-local-network③">local network</a>, solutions for publicly
+accessbile <a data-link-type="dfn" href="#device" id="ref-for-device②">devices</a> are out of scope. Actually, it is easy for such kind of devices
+to get <a data-link-type="dfn" href="#web-pki-certificate" id="ref-for-web-pki-certificate①">Web PKI certificates</a> so there are few technical challenges on browser
+implementations and related standardization activities. Therefore, this document
+does not contain the solutions for the publicly accessible <a data-link-type="dfn" href="#device" id="ref-for-device③">devices</a> as <a href="#possible-solutions">§5 Possible Solutions</a> but as <a href="#existing-solutions">§4 Existing Solutions</a>.</p>
+   <h3 class="heading settled" data-level="3.2" id="target-local-networks"><span class="secno">3.2. </span><span class="content">Target Local Networks</span><a class="self-link" href="#target-local-networks"></a></h3>
+   <p>Based on <a data-link-type="biblio" href="#biblio-httpslocal-usecases">[HTTPSLOCAL-USECASES]</a>, we regard following types of network as <a data-link-type="dfn" href="#local-network" id="ref-for-local-network④">local network</a>:</p>
+   <ul>
+    <li data-md>
+     <p>home network</p>
+     <ul>
+      <li data-md>
+       <p>Related use cases: <a data-link-type="biblio" href="#biblio-uc-01">[UC-01]</a>, <a data-link-type="biblio" href="#biblio-uc-02">[UC-02]</a>, <a data-link-type="biblio" href="#biblio-uc-03">[UC-03]</a>, <a data-link-type="biblio" href="#biblio-uc-06">[UC-06]</a>, <a data-link-type="biblio" href="#biblio-uc-07">[UC-07]</a>, <a data-link-type="biblio" href="#biblio-uc-08">[UC-08]</a></p>
+     </ul>
+    <li data-md>
+     <p>intra-company network (includes factory network, building network, etc.)</p>
+     <ul>
+      <li data-md>
+       <p>Related use cases: <a data-link-type="biblio" href="#biblio-uc-05">[UC-05]</a>, <a data-link-type="biblio" href="#biblio-uc-09">[UC-09]</a></p>
+     </ul>
+    <li data-md>
+     <p>intra-machine(intra-<a data-link-type="dfn" href="#ua" id="ref-for-ua④">UA</a>) network (uses loopback addresses, etc.)</p>
+     <ul>
+      <li data-md>
+       <p>Related use cases: <a data-link-type="biblio" href="#biblio-uc-04">[UC-04]</a></p>
+     </ul>
+   </ul>
+   <p>In aspect of IP address spaces, <a data-link-type="dfn" href="#local-network" id="ref-for-local-network⑤">local networks</a> in this document can be defined as the networks
+that use following address spaces or prefixes:</p>
+   <ul>
+    <li data-md>
+     <p>IPv4 private address space defined in <a data-link-type="biblio" href="#biblio-rfc1918">[RFC1918]</a>.</p>
+    <li data-md>
+     <p>IPv4 link-local space defined in <a data-link-type="biblio" href="#biblio-rfc3927">[RFC3927]</a>.</p>
+    <li data-md>
+     <p>IPv4 loopback space defined in <a data-link-type="biblio" href="#biblio-rfc1122">[RFC1122]</a>.</p>
+    <li data-md>
+     <p>IPv6 unique local address prefix defined in <a data-link-type="biblio" href="#biblio-rfc4193">[RFC4193]</a>.</p>
+    <li data-md>
+     <p>IPv6 link-local prefix defined in <a data-link-type="biblio" href="#biblio-rfc4191">[RFC4191]</a>.</p>
+    <li data-md>
+     <p>IPv6 loopback address defined in <a data-link-type="biblio" href="#biblio-rfc4191">[RFC4191]</a>.</p>
+   </ul>
+   <h3 class="heading settled" data-level="3.3" id="target-access-patterns"><span class="secno">3.3. </span><span class="content">Target Access Patterns</span><a class="self-link" href="#target-access-patterns"></a></h3>
+   <p>In general, we can categorize the use cases listed in <a data-link-type="biblio" href="#biblio-httpslocal-usecases">[HTTPSLOCAL-USECASES]</a> into two <a data-link-type="dfn" href="#device" id="ref-for-device④">device</a> access patterns principle for local HTTPS.
 They are as follows:</p>
    <ul>
     <li data-md>
-     <p><strong>Normal access pattern</strong>: the <a data-link-type="dfn" href="#device" id="ref-for-device②">device</a> has web contents and a user types the address of the <a data-link-type="dfn" href="#device" id="ref-for-device③">device</a> (e.g., ‘https://device.local’) on the <a data-link-type="dfn" href="#ua" id="ref-for-ua④">UA</a> directly and receives the contents.</p>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="normal-access-pattern">Normal access pattern</dfn>: the <a data-link-type="dfn" href="#device" id="ref-for-device⑤">device</a> has web contents and a user types the address of the <a data-link-type="dfn" href="#device" id="ref-for-device⑥">device</a> (e.g., <code>https://device.local</code>) on the <a data-link-type="dfn" href="#ua" id="ref-for-ua⑤">UA</a> directly and receives the contents.</p>
+     <ul>
+      <li data-md>
+       <p>Related use cases: <a data-link-type="biblio" href="#biblio-uc-07">[UC-07]</a></p>
+     </ul>
     <li data-md>
-     <p><strong>Cross-origin access pattern</strong>: the <a data-link-type="dfn" href="#device" id="ref-for-device④">device</a> has API endpoints and a web frontend loaded
-on a <a data-link-type="dfn" href="#ua" id="ref-for-ua⑤">UA</a> from the internet (hereafter, simply called ‘web service’) accesses the APIs
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="cross-origin-access-pattern">Cross-origin access pattern</dfn>: the <a data-link-type="dfn" href="#device" id="ref-for-device⑦">device</a> has API endpoints and a web frontend loaded
+on a <a data-link-type="dfn" href="#ua" id="ref-for-ua⑥">UA</a> from the internet (hereafter, simply called ‘web service’) accesses the APIs
 with a browser API (e.g., <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a>) and receives the contents.</p>
+     <ul>
+      <li data-md>
+       <p>Related use cases: <a data-link-type="biblio" href="#biblio-uc-01">[UC-01]</a>, <a data-link-type="biblio" href="#biblio-uc-02">[UC-02]</a>, <a data-link-type="biblio" href="#biblio-uc-03">[UC-03]</a>, <a data-link-type="biblio" href="#biblio-uc-04">[UC-04]</a>, <a data-link-type="biblio" href="#biblio-uc-05">[UC-05]</a>, <a data-link-type="biblio" href="#biblio-uc-06">[UC-06]</a>, <a data-link-type="biblio" href="#biblio-uc-08">[UC-08]</a>, <a data-link-type="biblio" href="#biblio-uc-09">[UC-09]</a></p>
+     </ul>
    </ul>
-   <p>All approaches proposed in this draft are based on either one or both of the access patterns.</p>
-   <h2 class="heading settled" data-level="4" id="possible-solutions"><span class="secno">4. </span><span class="content">Possible Solutions</span><a class="self-link" href="#possible-solutions"></a></h2>
-   <p class="issue" id="issue-a2297428"><a class="self-link" href="#issue-a2297428"></a> Refine the structure of this section. Do we need to categorize the solutions based on the access patterns described the previous section?</p>
-   <h3 class="heading settled" data-level="4.1" id="web-pki-solutions"><span class="secno">4.1. </span><span class="content">Web PKI based Solutions</span><a class="self-link" href="#web-pki-solutions"></a></h3>
-   <p>In this approach, <a data-link-type="dfn" href="#public-ca" id="ref-for-public-ca">public CA</a> issues certificates for devices that have a globally
-unique domain names because <a data-link-type="dfn" href="#public-ca" id="ref-for-public-ca①">public CA</a> cannot issue certificates for local domains
-such as <code>.local</code> or <code>.home.arpa</code> as described in <a data-link-type="biblio" href="#biblio-ca-browser-forum-guideline">[CA-Browser-Forum-Guideline]</a>.</p>
-   <p>Example current industry best practices of this approach are Mozilla’s <a data-link-type="biblio" href="#biblio-webthings-gateway">[WEBTHINGS-GATEWAY]</a> and <a data-link-type="biblio" href="#biblio-plex">[PLEX]</a>.
-While these approaches are deployed and fits well in some use cases,
-they cannot work in scenarios where domains are for example, ‘server.local’ or ‘server.home.arpa’.
-Moreover, the access to local devices in the first place is an important issue
+   <p>All solutions proposed in this document are based on either one or both of the access patterns.</p>
+   <h2 class="heading settled" data-level="4" id="existing-solutions"><span class="secno">4. </span><span class="content">Existing Solutions</span><a class="self-link" href="#existing-solutions"></a></h2>
+   <p>Before providing the list of the possible solutions, we’d like to walk through existing solutions.</p>
+   <h3 class="heading settled" data-level="4.1" id="existing-sol-1"><span class="secno">4.1. </span><span class="content">Web PKI based Solutions</span><a class="self-link" href="#existing-sol-1"></a></h3>
+   <p>When a <a data-link-type="dfn" href="#device" id="ref-for-device⑧">device</a> is publicly accessible, the <a data-link-type="dfn" href="#device" id="ref-for-device⑨">device</a> can get a <a data-link-type="dfn" href="#web-pki-certificate" id="ref-for-web-pki-certificate②">Web PKI certificate</a> from a <a data-link-type="dfn" href="#public-ca" id="ref-for-public-ca">public CA</a> and use it on HTTPS communications with <a data-link-type="dfn" href="#ua" id="ref-for-ua⑦">UAs</a>.
+However, in this case, the <a data-link-type="dfn" href="#device" id="ref-for-device①⓪">device</a>'s domain name must be globally unique (e.g., <code>device-id.device-vendor.com</code>)
+because <a data-link-type="dfn" href="#public-ca" id="ref-for-public-ca①">public CA</a> cannot issue certificates for local domains
+such as <code>.local</code>(<a data-link-type="biblio" href="#biblio-rfc6762">[RFC6762]</a>) or <code>.home.arpa</code> (<a data-link-type="biblio" href="#biblio-rfc8375">[RFC8375]</a>)
+as described in <a data-link-type="biblio" href="#biblio-cabforum-guidance-deprecated-internal-names">[CABFORUM-GUIDANCE-DEPRECATED-INTERNAL-NAMES]</a>.</p>
+   <p>Example current industry best practices of this solution are Mozilla’s <a data-link-type="biblio" href="#biblio-webthings-gateway">[WEBTHINGS-GATEWAY]</a> and <a data-link-type="biblio" href="#biblio-plex">[PLEX]</a>.</p>
+   <p>While these solutions are deployed and fits well in some use cases,
+they cannot work in scenarios where domains are for example, <code>device.local</code> or <code>device.home.arpa</code>.
+Moreover, the access to local <a data-link-type="dfn" href="#device" id="ref-for-device①①">devices</a> in the first place is an important issue
 (we understand that this issue can be mitigated by preconfiguring the gateway
 router/proxy but these settings are difficult to be made available in scenarios
-such as home networks). The other issue is resolving the domain name when there
-is no Internet access. Finally, the number of required public CAs is significantly
+such as home networks).
+The other issue is resolving the domain name when there is no internet access.
+Finally, the number of required <a data-link-type="dfn" href="#public-ca" id="ref-for-public-ca②">public CAs</a> is significantly
 larger than other use cases due to the vast nature of IoT devices.</p>
-   <h3 class="heading settled" data-level="4.2" id="non-web-pki-solutions"><span class="secno">4.2. </span><span class="content">non-Web PKI based Solutions</span><a class="self-link" href="#non-web-pki-solutions"></a></h3>
-   <p>In this section, we describe three technical approaches for communications
-between a <a data-link-type="dfn" href="#ua" id="ref-for-ua⑥">UA</a> and a local server that has private domain names.</p>
-   <p class="note" role="note"><span>NOTE:</span> For the following discussions, we use ‘device.local’ as an example of a domain name of a device. Of course, other local domain names (e.g., ‘device.home.arpa’) are applicable name which can be resolved but the name resolution methods should not be restricted only to mDNS.</p>
-   <h4 class="heading settled" data-level="4.2.1" id="approach-1"><span class="secno">4.2.1. </span><span class="content">Approach 1</span><a class="self-link" href="#approach-1"></a></h4>
-   <p>This approach is based on the user grant and the use of shared password in
-which <a data-link-type="biblio" href="#biblio-pake">[PAKE]</a>(J-PAKE, etc.) is used for the establishment of a secure
-end-to-end communication channel between the user <a data-link-type="dfn" href="#device" id="ref-for-device⑤">device</a> and the local server.
-It is worthwhile to mention that J-PAKE has already been implemented in <a data-link-type="biblio" href="#biblio-mbed-tls">[MBED-TLS]</a> and also the use of J-PAKE has been discussed in <a data-link-type="biblio" href="#biblio-w3c-second-screen-wg">[W3C-Second-Screen-WG]</a>.
-Using the following methods, this approach can be realized:</p>
-   <p>A <a data-link-type="dfn" href="#web-service" id="ref-for-web-service">web service</a> (e.g., https://device-user.example.com) accesses a <a data-link-type="dfn" href="#device" id="ref-for-device⑥">device</a> (e.g., ‘device.local’)
-via a browser. The <a data-link-type="dfn" href="#ua" id="ref-for-ua⑦">UA</a> allows the access only if the user grants the access through
-the UI shown in the figure below. The UI will be displayed when the underlying fetch API
-is called for the access with the extension below and the <a data-link-type="dfn" href="#device" id="ref-for-device⑦">device</a> successfully performs
-a TLS handshake using <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a> (or, other PAKE-based cipher suites).</p>
-<pre class="language-javascript highlight">fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c->
-  tlsExtension<c- o>:</c-> <c- p>{</c-> <c- c1>// Should this be available only to local servers?</c->
-    type<c- o>:</c-> <c- u>"pake"</c-><c- p>,</c->
-    <c- c1>// Following is an optional argument for subsequent TLS sessions</c->
-    <c- c1>// to identify the local server and to omit user approval.</c->
-    pinnedIdentity<c- o>:</c-> <c- u>"&lt;base64-encoded SPKI of the certificate or its fingerprint>"</c-><c- p>}});</c->
-</pre>
-   <div align="center"> <img src="figs/fig_approach_1_2.png" width="480px"> </div>
-   <p>To make sure that the ‘device.local’ displayed on the pop-up window is really
-the same as the domain name of the <a data-link-type="dfn" href="#device" id="ref-for-device⑧">device</a> which the user intends to grant the access to,
+   <h3 class="heading settled" data-level="4.2" id="existing-sol-2"><span class="secno">4.2. </span><span class="content">Non-Web PKI based Solutions</span><a class="self-link" href="#existing-sol-2"></a></h3>
+   <p>Installing <a data-link-type="dfn" href="#non-web-pki-certificate" id="ref-for-non-web-pki-certificate①">non-Web PKI certificates</a> (e.g., self-signed certificates) into a <a data-link-type="dfn" href="#ua" id="ref-for-ua⑧">UA</a> as a trusted one manually is a widely used solution.</p>
+   <p class="note" role="note"><span>NOTE:</span> Write the problems of this solution here.</p>
+   <h2 class="heading settled" data-level="5" id="possible-solutions"><span class="secno">5. </span><span class="content">Possible Solutions</span><a class="self-link" href="#possible-solutions"></a></h2>
+   <p>In this section, we describes possible solutions for using HTTPS in <a data-link-type="dfn" href="#local-network" id="ref-for-local-network⑥">local network</a> except for using normal <a data-link-type="dfn" href="#web-pki-certificate" id="ref-for-web-pki-certificate③">Web PKI certificates</a>, and complicated (and maybe dangerous)
+manual operations referred in <a href="#existing-solutions">§4 Existing Solutions</a>.</p>
+   <p>Each solution defined in the following sections is categorized
+based on the first class requirement, <a data-link-type="biblio" href="#biblio-req-1">[REQ-1]</a>: Guarantee of Device Trustworthiness.</p>
+   <h3 class="heading settled" data-level="5.1" id="web-pki-solutions"><span class="secno">5.1. </span><span class="content">Web PKI based Solutions</span><a class="self-link" href="#web-pki-solutions"></a></h3>
+   <h4 class="heading settled" data-level="5.1.1" id="sol-1"><span class="secno">5.1.1. </span><span class="content">SOL-1: Using Name Constraints Certificates</span><a class="self-link" href="#sol-1"></a></h4>
+   <p class="note" role="note"><span>NOTE:</span> Name constraints certificate based solution here.</p>
+   <h3 class="heading settled" data-level="5.2" id="non-web-pki-solutions"><span class="secno">5.2. </span><span class="content">Non-Web PKI based Solutions</span><a class="self-link" href="#non-web-pki-solutions"></a></h3>
+   <p>In this section, we describe three technical solutions for communications
+between a <a data-link-type="dfn" href="#ua" id="ref-for-ua⑨">UA</a> and a local server that has private domain names.</p>
+   <p class="note" role="note"><span>NOTE:</span> For the following discussions, we use <code>device.local</code> as an example of
+a domain name of a <a data-link-type="dfn" href="#device" id="ref-for-device①②">device</a>. Of course, other local domain names (e.g., <code>device.home.arpa</code>)
+are applicable name which can be resolved but the name resolution methods
+should not be restricted only to mDNS (<a data-link-type="biblio" href="#biblio-rfc6762">[RFC6762]</a>).</p>
+   <h4 class="heading settled" data-level="5.2.1" id="sol-2"><span class="secno">5.2.1. </span><span class="content">SOL-2: Using Shared Secret</span><a class="self-link" href="#sol-2"></a></h4>
+   <p>This solution is based on the user grant and the use of shared password in
+which PAKE (e.g., J-PAKE(<a data-link-type="biblio" href="#biblio-rfc8236">[RFC8236]</a>)) is used for the establishment of
+a TLS session between the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⓪">UA</a> and the <a data-link-type="dfn" href="#device" id="ref-for-device①③">device</a>.
+It is worthwhile to mention that J-PAKE has already been implemented in <a data-link-type="biblio" href="#biblio-mbed-tls">[MBED-TLS]</a> and also the use of J-PAKE has been discussed in <a data-link-type="biblio" href="#biblio-w3c-second-screen-wg">[W3C-SECOND-SCREEN-WG]</a>.</p>
+   <p>This solution can be realized on both of the access patterns mentioned in <a href="#target-access-patterns">§3.3 Target Access Patterns</a>.</p>
+   <h5 class="heading settled" data-level="5.2.1.1" id="sol-2-nap"><span class="secno">5.2.1.1. </span><span class="content"><a data-link-type="dfn" href="#normal-access-pattern" id="ref-for-normal-access-pattern">Normal Access Pattern</a></span><a class="self-link" href="#sol-2-nap"></a></h5>
+   <p>When a user inputs a <a data-link-type="dfn" href="#device" id="ref-for-device①④">device</a> URL (<code>https://device.local</code>) to the address bar of the <a data-link-type="dfn" href="#ua" id="ref-for-ua①①">UA</a> directly,
+the <a data-link-type="dfn" href="#ua" id="ref-for-ua①②">UA</a> allows the access only if the user grants the access through the UI shown in the figure below.</p>
+   <div align="center"> <img src="figs/fig_sol_2_1.png" width="480px"> </div>
+   <p>The UI will be displayed when the <a data-link-type="dfn" href="#device" id="ref-for-device①⑤">device</a> URL has local domain name and the underlying TLS handshake
+detects the <a data-link-type="dfn" href="#device" id="ref-for-device①⑥">device</a> supports a PAKE-based cipher suite (e.g., <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a>).</p>
+   <p>To make sure that the <code>device.local</code> displayed on the pop-up window is really
+the same as the domain name of the <a data-link-type="dfn" href="#device" id="ref-for-device①⑦">device</a> which the user intends to grant the access to,
 user inserts either a PIN or password through the pop-up window.</p>
-   <p>The above flow can be achieved by extending the UI with adding the cipher suites in the browser. This will enable binding the displayed domain name to the physical device.</p>
-   <p class="note" role="note"><span>NOTE:</span> However, a specific method on how to bind the name to the TLS session needs to be defined to distinguish devices which have the same names as mentioned in <a data-link-type="biblio" href="#biblio-https-for-local-domains">[HTTPS-FOR-LOCAL-DOMAINS]</a>. This method is needed for both approaches #2 and #3. For example, using device ‘local domain name + fingerprint in self-signed certificate’ as the TLS server identifier (which is defined in <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a> can be considered as one of the candidate solutions. The use of self-signed certificate after the first J-PAKE based TLS session needs to be defined as well. This will mitigate the PIN or password entry for subsequent TLS sessions.</p>
-   <h5 class="heading settled" data-level="4.2.1.1" id="requirements-1"><span class="secno">4.2.1.1. </span><span class="content">Browser Requirements</span><a class="self-link" href="#requirements-1"></a></h5>
+   <p>When the PIN or password is correct, the TLS handshake will be completed successfully and the user can
+get a web UI of the <a data-link-type="dfn" href="#device" id="ref-for-device①⑧">device</a> without any negative security indicators.</p>
+   <p>The above flow can be achieved by extending the UI with adding the cipher suites in the browser.
+This will enable binding the displayed domain name to the physical device.</p>
+   <h5 class="heading settled" data-level="5.2.1.2" id="sol-2-coap"><span class="secno">5.2.1.2. </span><span class="content"><a data-link-type="dfn" href="#cross-origin-access-pattern" id="ref-for-cross-origin-access-pattern">Cross-Origin Access Pattern</a></span><a class="self-link" href="#sol-2-coap"></a></h5>
+   <p>When a <a data-link-type="dfn" href="#web-service" id="ref-for-web-service">web service</a> (e.g., <code>https://device-user.example.com</code>) accesses the <a data-link-type="dfn" href="#device" id="ref-for-device①⑨">device</a> via the <a data-link-type="dfn" href="#ua" id="ref-for-ua①③">UA</a>.
+The <a data-link-type="dfn" href="#ua" id="ref-for-ua①④">UA</a> allows the access only if the user grants the access through the UI shown in the figure below.</p>
+   <div align="center"> <img src="figs/fig_solution_1_2.png" width="480px"> </div>
+   <p>The UI will be displayed when the underlying <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API is called for the access
+with the extension below and the <a data-link-type="dfn" href="#device" id="ref-for-device②⓪">device</a> successfully performs a TLS handshake
+using a PAKE-based cipher suite.</p>
+   <div class="example" id="example-ad77f4e6">
+    <a class="self-link" href="#example-ad77f4e6"></a> The following code is an example of <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API extension to support this solution. 
+<pre class="highlight">fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c->
+  <c- c1>// The following extension might be available only to private domain names.</c->
+  tlsExtension<c- o>:</c-> <c- p>{</c->
+    <c- c1>// type of the TLS extension.</c->
+    type<c- o>:</c-> <c- u>"pake"</c-><c- p>,</c->
+    <c- c1>// base64-encoded SPKI of the certificate or its fingerprint.</c->
+    <c- c1>//     this is an optional argument for subsequent TLS sessions</c->
+    <c- c1>//     to identify the local server and to omit user approval.</c->
+    pinnedIdentity<c- o>:</c-> <c- u>"8fwpbctkMAq2x73orFsOXMruxWnmFSyhXioQmclhJ5L="</c-><c- p>}});</c->
+</pre>
+   </div>
+   <p>Subsequent flow is the same as the <a href="#sol-2-nap">§5.2.1.1 Normal Access Pattern</a>.
+To achieve this <a data-link-type="dfn" href="#cross-origin-access-pattern" id="ref-for-cross-origin-access-pattern①">cross-origin access pattern</a> flow, in addition to the extensions required by <a href="#sol-2-nap">§5.2.1.1 Normal Access Pattern</a>,
+the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⑤">UA</a> have to support the <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API extension demonstrated above.</p>
+   <p class="note" role="note"><span>NOTE:</span> However, a specific method on how to bind the name to the TLS session
+needs to be defined to distinguish <a data-link-type="dfn" href="#device" id="ref-for-device②①">devices</a> which have the same names as mentioned
+in <a data-link-type="biblio" href="#biblio-https-for-local-domains">[HTTPS-FOR-LOCAL-DOMAINS]</a>. This method is needed for both solutions <a href="#sol-3">§5.2.2 SOL-3: Using Application Layer Access Token</a> and <a href="#sol-4">§5.2.3 SOL-4: Using Device Authority-Issued Certificate</a>.
+For example, using device ‘local domain name + fingerprint in self-signed certificate’
+as the TLS server identifier (which is defined in <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a> can be considered as
+one of the candidate solutions. The use of self-signed certificate after the first
+J-PAKE based TLS session needs to be defined as well. This will mitigate the PIN or
+password entry for subsequent TLS sessions.</p>
+   <h5 class="heading settled" data-level="5.2.1.3" id="requirements-2"><span class="secno">5.2.1.3. </span><span class="content">Browser Requirements</span><a class="self-link" href="#requirements-2"></a></h5>
    <p>The requirements for browsers can be summarized as follows:</p>
    <ul>
     <li data-md>
-     <p>Support additional cipher suites for J-PAKE.</p>
+     <p>Support additional cipher suites for PAKE(e.g., <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a>).</p>
     <li data-md>
      <p>Implement the pop-up window for PIN/Password input.</p>
     <li data-md>
-     <p>Support a method to use a self-signed certificate after the first J-PACKE-based TLS session.</p>
+     <p>Support a method to use a self-signed certificate after the first PAKE-based TLS session.</p>
    </ul>
-   <h5 class="heading settled" data-level="4.2.1.2" id="dependency-1"><span class="secno">4.2.1.2. </span><span class="content">Dependency to other SDOs</span><a class="self-link" href="#dependency-1"></a></h5>
-   <p>This approach will require work and collaboration with the IETF.</p>
+   <h5 class="heading settled" data-level="5.2.1.4" id="dependency-2"><span class="secno">5.2.1.4. </span><span class="content">Dependency to other SDOs</span><a class="self-link" href="#dependency-2"></a></h5>
+   <p>This solution will require work and collaboration with the IETF.</p>
    <ul>
     <li data-md>
-     <p>[Draft document][11] was an individual submission and it is currently expired.
+     <p><a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a> was an individual submission and it is currently expired.
 If W3C embraces this solution, the work needs to resumed and completed.</p>
     <li data-md>
-     <p>A method to bind a domain name to a TLS session over ECJPAKE needs to
+     <p>A method to bind a domain name to a TLS session over <a data-link-type="biblio" href="#biblio-ec-jpake">[EC-JPAKE]</a> needs to
 be specified and standardized.</p>
    </ul>
-   <h4 class="heading settled" data-level="4.2.2" id="approach-2"><span class="secno">4.2.2. </span><span class="content">Approach 2</span><a class="self-link" href="#approach-2"></a></h4>
-   <p>In approach #1, there is no trust anchor that can guarantee the authenticity of devices
-and it is difficult for users to find whether the <a data-link-type="dfn" href="#device" id="ref-for-device⑨">device</a> is a legitimate one.
-From the standpoint of web services, it is often argued whether a server authentication
+   <h4 class="heading settled" data-level="5.2.2" id="sol-3"><span class="secno">5.2.2. </span><span class="content">SOL-3: Using Application Layer Access Token</span><a class="self-link" href="#sol-3"></a></h4>
+   <p>In <a href="#sol-2">§5.2.1 SOL-2: Using Shared Secret</a>, there is no trust anchor that can guarantee the authenticity of <a data-link-type="dfn" href="#device" id="ref-for-device②②">devices</a> and it is difficult for users to find whether the <a data-link-type="dfn" href="#device" id="ref-for-device②③">device</a> is a legitimate one.
+From the standpoint of <a data-link-type="dfn" href="#web-service" id="ref-for-web-service①">web services</a>, it is often argued whether a server authentication
 should be delegated to a user’s judgement.</p>
-   <p>Approach #2 resolves this problem by introducing an <a data-link-type="biblio" href="#biblio-ace">[ACE]</a> and <a data-link-type="biblio" href="#biblio-oauth">[OAUTH]</a> based
-AS (Authorization Server) as an authority of the <a data-link-type="dfn" href="#device" id="ref-for-device①⓪">device</a> into the local HTTPS
-system as shown below.</p>
-   <div align="center"> <img src="figs/fig_approach_2_1.png" width="480px"> </div>
+   <p>This solution resolves the problem by introducing an <a data-link-type="biblio" href="#biblio-ietf-ace-wg">[IETF-ACE-WG]</a> and <a data-link-type="biblio" href="#biblio-ietf-oauth-wg">[IETF-OAUTH-WG]</a> based
+AS (Authorization Server) as an authority of the <a data-link-type="dfn" href="#device" id="ref-for-device②④">device</a> into the local HTTPS system as shown below.</p>
+   <div align="center"> <img src="figs/fig_solution_2_1.png" width="480px"> </div>
    <p>The ACE components have the following relationships:</p>
    <ul>
     <li data-md>
@@ -1668,115 +1803,132 @@ the AS is configured by the device manufacturer.</p>
 has been registered to the AS in advance and has a trust relationship with it.</p>
     <li data-md>
      <p>The user, which is regarded as a Resource Owner in the context of ACE,
-has an account for the AS and the ownership information to <a data-link-type="dfn" href="#device" id="ref-for-device①①">device</a> has been
+has an account for the AS and the ownership information to <a data-link-type="dfn" href="#device" id="ref-for-device②⑤">device</a> has been
 registered to the AS in advance.</p>
    </ul>
-   <p>Under the above relationships, the client (Web Service) can get an access token
-to access the <a data-link-type="dfn" href="#device" id="ref-for-device①②">device</a> based on user’s approval. At this time, the client can also
-get the RS information that includes an URI and an <a data-link-type="biblio" href="#biblio-rpk">[RPK]</a> (Raw Public Key)
-or self-signed certificate of the <a data-link-type="dfn" href="#device" id="ref-for-device①③">device</a> (step (B) as shown in above figure).
-Since the existing web browsers do not permit the access to the <a data-link-type="dfn" href="#device" id="ref-for-device①④">device</a> with
+   <p>Under the above relationships, the client (<a data-link-type="dfn" href="#web-service" id="ref-for-web-service②">web service</a>) can get an access token
+to access the <a data-link-type="dfn" href="#device" id="ref-for-device②⑥">device</a> based on user’s approval. At this time, the client can also
+get the RS information that includes an URI and an RPK(Raw Public Key)(<a data-link-type="biblio" href="#biblio-rfc7250">[RFC7250]</a>)
+or self-signed certificate of the <a data-link-type="dfn" href="#device" id="ref-for-device②⑦">device</a> (step (B) as shown in above figure).
+Since the existing browsers do not permit the access to the <a data-link-type="dfn" href="#device" id="ref-for-device②⑧">device</a> with
 the access token (step (C) in above figure), browser API and related UI
-need to be extended to enable the client to access the <a data-link-type="dfn" href="#device" id="ref-for-device①⑤">device</a> only when the client
-provides the <a data-link-type="dfn" href="#ua" id="ref-for-ua⑧">UA</a> with the RS information (a self-signed certificate or RPK)
+need to be extended to enable the client to access the <a data-link-type="dfn" href="#device" id="ref-for-device②⑨">device</a> only when the client
+provides the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⑥">UA</a> with the RS information (a self-signed certificate or RPK)
 as a trusted one.</p>
-   <p>The RS information can be sent to the <a data-link-type="dfn" href="#ua" id="ref-for-ua⑨">UA</a> as an extended parameter of fetch API as follows:</p>
-<pre class="language-javascript highlight"><c- c1>// When RS Information includes a RPK, </c->
+   <h5 class="heading settled" data-level="5.2.2.1" id="sol-3-coap"><span class="secno">5.2.2.1. </span><span class="content"><a data-link-type="dfn" href="#cross-origin-access-pattern" id="ref-for-cross-origin-access-pattern②">Cross-Origin Access Pattern</a></span><a class="self-link" href="#sol-3-coap"></a></h5>
+   <p>The RS information can be sent to the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⑦">UA</a> as an extended parameter of <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API as follows:</p>
+   <div class="example" id="example-ae443422">
+    <a class="self-link" href="#example-ae443422"></a> The following code is an example of <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API extension to support this solution. 
+<pre class="highlight"><c- c1>// When RS Information includes a RPK, </c->
 fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c->
   tlsExtension<c- o>:</c-> <c- p>{</c->
+    <c- c1>// type of the TLS extension.</c->
     type<c- o>:</c-> <c- u>"rpk"</c-><c- p>,</c->
-    pinnedIdentity<c- o>:</c-> <c- u>"&lt;base64-encoded raw public key or its fingerprint>"</c-><c- p>}});</c->
+    <c- c1>// a base64-encoded raw public key or its fingerprint.</c->
+    pinnedIdentity<c- o>:</c-> <c- u>"8fwpbctkMAq2x73orFsOXMruxWnmFSyhXioQmclhJ5L="</c-><c- p>}});</c->
 
 <c- c1>// When RS Informatin includes a self-signed certificate, </c->
 fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c->
   tlsExtension<c- o>:</c-> <c- p>{</c->
-    type<c- o>:</c-> <c- u>"pkix"</c-><c- p>,</c-> <c- c1>// default value that can be omitted.</c->
-    pinnedIdentity<c- o>:</c-> <c- u>"&lt;base64-encoded SPKI of the certificate or its fingerprint>"</c-><c- p>}});</c->
+    <c- c1>// type of the TLS extension.</c->
+    <c- c1>//     'pkix' might be a default value that can be omitted.</c->
+    type<c- o>:</c-> <c- u>"pkix"</c-><c- p>,</c->
+    <c- c1>// a base64-encoded SPKI of the certificate or its fingerprint</c->
+    pinnedIdentity<c- o>:</c-> <c- u>"8fwpbctkMAq2x73orFsOXMruxWnmFSyhXioQmclhJ5L="</c-><c- p>}});</c->
 </pre>
-   <p>When the fetch API above is called, the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⓪">UA</a> shows a following pop-up window.</p>
-   <div align="center"> <img src="figs/fig_approach_2_2.png" width="480px"> </div>
-   <p>As the result, HTTPS accesses from the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service①">web service</a> to the <a data-link-type="dfn" href="#device" id="ref-for-device①⑥">device</a> are achieved
-by the <a data-link-type="dfn" href="#ua" id="ref-for-ua①①">UA</a> based on the trust relationship between the client and the AS (and the device)
+   </div>
+   <p>When the <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API above is called, the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⑧">UA</a> shows a following pop-up window.</p>
+   <div align="center"> <img src="figs/fig_solution_2_2.png" width="480px"> </div>
+   <p>As the result, HTTPS accesses from the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service③">web service</a> to the <a data-link-type="dfn" href="#device" id="ref-for-device③⓪">device</a> are achieved
+by the <a data-link-type="dfn" href="#ua" id="ref-for-ua①⑨">UA</a> based on the trust relationship between the client and the AS (and the <a data-link-type="dfn" href="#device" id="ref-for-device③①">device</a>)
 and with user’s explicit approval.</p>
-   <p>In addition, when the trust relationship between AS and the devices is built on attestation
-keys in TPM (Trusted Platform Module) on the devices, the authenticity of the devices can
-be enhanced. The use of the attestation keys is applicable to Approach #3 as well.</p>
-   <h5 class="heading settled" data-level="4.2.2.1" id="requirements-2"><span class="secno">4.2.2.1. </span><span class="content">Browser Requirements</span><a class="self-link" href="#requirements-2"></a></h5>
+   <p>In addition, when the trust relationship between AS and the <a data-link-type="dfn" href="#device" id="ref-for-device③②">devices</a> is built on attestation
+keys in TPM (Trusted Platform Module) on the <a data-link-type="dfn" href="#device" id="ref-for-device③③">devices</a>, the authenticity of the <a data-link-type="dfn" href="#device" id="ref-for-device③④">devices</a> can
+be enhanced. The use of the attestation keys is applicable to <a href="#sol-4">§5.2.3 SOL-4: Using Device Authority-Issued Certificate</a> as well.</p>
+   <h5 class="heading settled" data-level="5.2.2.2" id="requirements-3"><span class="secno">5.2.2.2. </span><span class="content">Browser Requirements</span><a class="self-link" href="#requirements-3"></a></h5>
    <p>The requirements for browsers can be summarized as follows:</p>
    <ul>
     <li data-md>
-     <p>Support additional parameters of fetch API mentioned above.</p>
+     <p>Support additional parameters of <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API mentioned above.</p>
     <li data-md>
-     <p>Support a TLS certificate type and extensions for using <a data-link-type="biblio" href="#biblio-rpk">[RPK]</a>.</p>
+     <p>Support a TLS certificate type and extensions for using RPK.</p>
     <li data-md>
      <p>Implement the pop-up window shown above.</p>
    </ul>
-   <h5 class="heading settled" data-level="4.2.2.2" id="dependency-2"><span class="secno">4.2.2.2. </span><span class="content">Dependency to other SDOs</span><a class="self-link" href="#dependency-2"></a></h5>
-   <p>This approach will require work and collaboration with the IETF.</p>
+   <h5 class="heading settled" data-level="5.2.2.3" id="dependency-3"><span class="secno">5.2.2.3. </span><span class="content">Dependency to other SDOs</span><a class="self-link" href="#dependency-3"></a></h5>
+   <p>This solution will require work and collaboration with the IETF.</p>
    <ul>
     <li data-md>
      <p>HTTPS profile for ACE (or extensions for OAuth): Since ACE is based on CoAP/OSCORE,
 it is necessary to define either a HTTPS profile for ACE or an extension to COAP/OSCORE
-under the assumption that the RSs are distributed and deployed in local network.</p>
+under the assumption that the RSs are distributed and deployed in <a data-link-type="dfn" href="#local-network" id="ref-for-local-network⑦">local network</a>.</p>
    </ul>
-   <h4 class="heading settled" data-level="4.2.3" id="approach-3"><span class="secno">4.2.3. </span><span class="content">Approach 3</span><a class="self-link" href="#approach-3"></a></h4>
-   <p>In this approach, the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service②">web service</a> trusts a vendor issued private certificate
-and asks the <a data-link-type="dfn" href="#ua" id="ref-for-ua①②">UA</a> to pin the certificate as a trusted one
+   <h4 class="heading settled" data-level="5.2.3" id="sol-4"><span class="secno">5.2.3. </span><span class="content">SOL-4: Using Device Authority-Issued Certificate</span><a class="self-link" href="#sol-4"></a></h4>
+   <p>In this solution, the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service④">web service</a> trusts a vendor (device authority) issued private certificate
+and asks the <a data-link-type="dfn" href="#ua" id="ref-for-ua②⓪">UA</a> to pin the certificate as a trusted one
 (only in the web service’s secure context) based on user grant.
-The trust can be built as an extension to Approach #2 in which
-AS has a <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca">private CA</a> role and the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service③">web service</a> trusts a <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca①">private CA</a> issued certificate
+The trust can be built as an extension to <a href="#sol-3">§5.2.2 SOL-3: Using Application Layer Access Token</a> in which
+AS has a <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca">private CA</a> role and the <a data-link-type="dfn" href="#web-service" id="ref-for-web-service⑤">web service</a> trusts a <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca①">private CA</a> issued certificate
 based either on a pre-registered relationship with the CA and AS or by some other means.</p>
-   <p>This approach can be realized by extending the browser API and related UI
-in a similar way as shown in Approach #2. Specifically, by extending the fetch API
+   <p>This solution can be realized by extending the browser API and related UI
+in a similar way as shown in <a href="#sol-3">§5.2.2 SOL-3: Using Application Layer Access Token</a>. Specifically, by extending the <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API
 as described below, it enables web services to provide the browsers with private CA
 certificates or <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca②">private CA</a> issued certificates as trusted ones.</p>
-<pre class="language-javascript highlight">fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c->
+   <div class="example" id="example-680a39a4">
+    <a class="self-link" href="#example-680a39a4"></a> The following code is an example of <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API extension to support this solution. 
+<pre class="highlight">fetch<c- p>(</c-><c- u>"https://device.local/stuff"</c-><c- p>,</c-> <c- p>{</c->
   tlsExtension<c- o>:</c-> <c- p>{</c->
-    type<c- o>:</c-> <c- u>"pkix"</c-><c- p>,</c-> <c- c1>// default value that can be omitted.</c->
-    pinnedIdentity<c- o>:</c-> <c- u>"&lt;base64-encoded SPKI of the vendor CA certificate or its fingerprint>"</c-><c- p>}});</c->
+    <c- c1>// type of the TLS extension.</c->
+    <c- c1>//     'pkix' might be a default value that can be omitted.</c->
+    type<c- o>:</c-> <c- u>"pkix"</c-><c- p>,</c->
+    <c- c1>// base64-encoded SPKI of the vendor CA cert or its fingerprint </c->
+    pinnedIdentity<c- o>:</c-> <c- u>"8fwpbctkMAq2x73orFsOXMruxWnmFSyhXioQmclhJ5L="</c-><c- p>}});</c->
 </pre>
-   <p>Similar to earlier approaches, the <a data-link-type="dfn" href="#ua" id="ref-for-ua①③">UA</a> shows a following pop-up window
-when the fetch API above is called.</p>
-   <div align="center"> <img src="figs/fig_approach_3_1.png" width="480px"> </div>
-   <p>For this approach, we argue that the framework on which a device vendor
-validates domain names of the devices and guarantees the authenticity
+   </div>
+   <p>Similar to earlier solutions, the <a data-link-type="dfn" href="#ua" id="ref-for-ua②①">UA</a> shows a following pop-up window
+when the <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API above is called.</p>
+   <div align="center"> <img src="figs/fig_solution_3_1.png" width="480px"> </div>
+   <p>For this solution, we argue that the framework on which a device vendor
+validates domain names of the <a data-link-type="dfn" href="#device" id="ref-for-device③⑤">devices</a> and guarantees the authenticity
 of them would be useful even if the names are local names.
 A domain-validated certificate can be issued by using the OOB (Out-of-Band)
 challenge as defined in the earlier draft of ACME(<a data-link-type="biblio" href="#biblio-acme-draft-8">[ACME-DRAFT-8]</a>).
 This was also discussed in <a data-link-type="biblio" href="#biblio-tpac-2017-breakout-session">[TPAC-2017-breakout-session]</a>.</p>
    <p>The challenge, which is the access to ‘https://device.local/.well-known/acme-challenge/{token}’,
 is executed by the ACME server’s frontend loaded on a browser
-that can communicate with the <a data-link-type="dfn" href="#device" id="ref-for-device①⑦">device</a> in a local network.
-Although the challenge through the <a data-link-type="dfn" href="#ua" id="ref-for-ua①④">UA</a> has some advantages
+that can communicate with the <a data-link-type="dfn" href="#device" id="ref-for-device③⑥">device</a> in a <a data-link-type="dfn" href="#local-network" id="ref-for-local-network⑧">local network</a>.
+Although the challenge through the <a data-link-type="dfn" href="#ua" id="ref-for-ua②②">UA</a> has some advantages
 (e.g., it can be based on a user grant, there is no need to change the firewall settings),
-it requires a fetch API extension for approach #2 that enables the access to the device
+it requires a <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API extension for solution #2 that enables the access to the device
 based on self-signed certificates or RPKs.</p>
    <p>It is important to note that there are other industry efforts on similar concepts
 as vendor-issued certificate (hereafter, <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca③">private CA</a> issued certificate).
 For example, <a data-link-type="biblio" href="#biblio-ieee8021ar">[IEEE802.1AR]</a> defines IDevID and LDevID that are device identifiers
-issued by the device manufacturers, and it seems that <a data-link-type="biblio" href="#biblio-pki-certificate-identifier-format-for-devices">[PKI-Certificate-Identifier-Format-for-Devices]</a> tries to make the device identifiers
-be available on the Web PKI. In addition, IETF <a data-link-type="biblio" href="#biblio-anima">[ANIMA]</a> WG has discussed the way
+issued by the device manufacturers, and it seems that <a data-link-type="biblio" href="#biblio-pki-certificate-identifier-format-for-devices">[PKI-CERTIFICATE-IDENTIFIER-FORMAT-FOR-DEVICES]</a> tries to make the device identifiers
+be available on the Web PKI. In addition, <a data-link-type="biblio" href="#biblio-ietf-anima-wg">[IETF-ANIMA-WG]</a> has discussed the way
 to issue an LDevID autonomously based on an IDevID.
 Therefore, we propose that the vendor-issued certificate should be regarded
 as an accepted mechanism that should be leveraged by the W3C community.</p>
-   <h5 class="heading settled" data-level="4.2.3.1" id="requirements-3"><span class="secno">4.2.3.1. </span><span class="content">Browser Requirements</span><a class="self-link" href="#requirements-3"></a></h5>
+   <h5 class="heading settled" data-level="5.2.3.1" id="requirements-4"><span class="secno">5.2.3.1. </span><span class="content">Browser Requirements</span><a class="self-link" href="#requirements-4"></a></h5>
    <p>The requirements for browsers can be summarized as follows:</p>
    <ul>
     <li data-md>
-     <p>Support additional parameters of fetch API mentioned above.</p>
+     <p>Support additional parameters of <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> API mentioned above.</p>
     <li data-md>
      <p>Implement the pop-up window shown above.</p>
    </ul>
-   <h5 class="heading settled" data-level="4.2.3.2" id="dependency-3"><span class="secno">4.2.3.2. </span><span class="content">Dependency to other SDOs</span><a class="self-link" href="#dependency-3"></a></h5>
-   <p>This approach will require work and collaboration with the IETF.</p>
+   <h5 class="heading settled" data-level="5.2.3.2" id="dependency-4"><span class="secno">5.2.3.2. </span><span class="content">Dependency to other SDOs</span><a class="self-link" href="#dependency-4"></a></h5>
+   <p>This solution will require work and collaboration with the IETF.</p>
    <ul>
     <li data-md>
-     <p>[PKI Certificate Identifier Format for Devices][18] is currently an individual submission yet.</p>
+     <p><a data-link-type="biblio" href="#biblio-pki-certificate-identifier-format-for-devices">[PKI-CERTIFICATE-IDENTIFIER-FORMAT-FOR-DEVICES]</a> is currently an individual submission yet.</p>
     <li data-md>
      <p>The ACME extension as described above.</p>
    </ul>
-   <h3 class="heading settled" data-level="4.3" id="pros-cons"><span class="secno">4.3. </span><span class="content">Pros and Cons of the Approaches</span><a class="self-link" href="#pros-cons"></a></h3>
-   <h4 class="heading settled" data-level="4.3.1" id="proscons-1"><span class="secno">4.3.1. </span><span class="content">Approach #1</span><a class="self-link" href="#proscons-1"></a></h4>
+   <h3 class="heading settled" data-level="5.3" id="pros-cons"><span class="secno">5.3. </span><span class="content">Pros and Cons of the Solutions</span><a class="self-link" href="#pros-cons"></a></h3>
+   <p class="note" role="note"><span>NOTE:</span> Write a table that shows relations between the requirements (REQ-x) and the solutions (SOL-x).</p>
+   <h4 class="heading settled" data-level="5.3.1" id="proscons-1"><span class="secno">5.3.1. </span><span class="content">SOL-1</span><a class="self-link" href="#proscons-1"></a></h4>
+   <h4 class="heading settled" data-level="5.3.2" id="proscons-2"><span class="secno">5.3.2. </span><span class="content">SOL-2</span><a class="self-link" href="#proscons-2"></a></h4>
    <ul>
     <li data-md>
      <p>Pros</p>
@@ -1793,29 +1945,28 @@ their own servers (AS and/or CA) on the internet.</p>
      <p>Cons</p>
      <ul>
       <li data-md>
-       <p>There is no trust anchor for web services to trust the devices and their domain names.</p>
+       <p>There is no trust anchor for web services to trust the <a data-link-type="dfn" href="#device" id="ref-for-device③⑦">devices</a> and their domain names.</p>
       <li data-md>
-       <p>A user has to input a PIN /password, or a <a data-link-type="dfn" href="#device" id="ref-for-device①⑧">device</a> has to support
+       <p>A user has to input a PIN /password, or a <a data-link-type="dfn" href="#device" id="ref-for-device③⑧">device</a> has to support
 a secondary communication channel (e.g., BLE, NFC).</p>
       <li data-md>
        <p>Web browsers need to support PAKE-based cipher suites.</p>
      </ul>
    </ul>
-   <h4 class="heading settled" data-level="4.3.2" id="proscons-2"><span class="secno">4.3.2. </span><span class="content">Approach #2</span><a class="self-link" href="#proscons-2"></a></h4>
+   <h4 class="heading settled" data-level="5.3.3" id="proscons-3"><span class="secno">5.3.3. </span><span class="content">SOL-3</span><a class="self-link" href="#proscons-3"></a></h4>
    <ul>
     <li data-md>
      <p>Pros</p>
      <ul>
       <li data-md>
-       <p>Web services can trust devices as far as they can trust AS for the devices.</p>
+       <p>Web services can trust <a data-link-type="dfn" href="#device" id="ref-for-device③⑨">devices</a> as far as they can trust AS for the <a data-link-type="dfn" href="#device" id="ref-for-device④⓪">devices</a>.</p>
       <li data-md>
-       <p>If a <a data-link-type="dfn" href="#device" id="ref-for-device①⑨">device</a> can get <a data-link-type="dfn" href="#web-service" id="ref-for-web-service④">web service</a> information from the AS,
-the <a data-link-type="dfn" href="#device" id="ref-for-device②⓪">device</a> can configure proper CORS settings in advance.
-It means that the approach would be familiar with the secure
+       <p>If a <a data-link-type="dfn" href="#device" id="ref-for-device④①">device</a> can get <a data-link-type="dfn" href="#web-service" id="ref-for-web-service⑥">web service</a> information from the AS,
+the <a data-link-type="dfn" href="#device" id="ref-for-device④②">device</a> can configure proper CORS settings in advance.
+It means that the solution would be familiar with the secure
 local cross-origin access method described in <a data-link-type="biblio" href="#biblio-cors-and-rfc1918">[CORS-AND-RFC1918]</a>).</p>
       <li data-md>
-       <p>The authenticity of devices can be enhanced when the AS authenticate devices
-based on attestation keys in TPM on the devices.</p>
+       <p>The authenticity of <a data-link-type="dfn" href="#device" id="ref-for-device④③">devices</a> can be enhanced when the AS authenticate <a data-link-type="dfn" href="#device" id="ref-for-device④④">devices</a> based on attestation keys in TPM on the <a data-link-type="dfn" href="#device" id="ref-for-device④⑤">devices</a>.</p>
      </ul>
     <li data-md>
      <p>Cons</p>
@@ -1827,27 +1978,27 @@ based on attestation keys in TPM on the devices.</p>
       <li data-md>
        <p>Device domain names are not validated.</p>
       <li data-md>
-       <p>Another browser API (for example, which allows a <a data-link-type="dfn" href="#web-service" id="ref-for-web-service⑤">web service</a> to pin a certificate
+       <p>Another browser API (for example, which allows a <a data-link-type="dfn" href="#web-service" id="ref-for-web-service⑦">web service</a> to pin a certificate
 in the context of a specific origin) would be needed to support the normal access pattern use case.</p>
      </ul>
    </ul>
-   <h4 class="heading settled" data-level="4.3.3" id="proscons-3"><span class="secno">4.3.3. </span><span class="content">Approach #3</span><a class="self-link" href="#proscons-3"></a></h4>
+   <h4 class="heading settled" data-level="5.3.4" id="proscons-4"><span class="secno">5.3.4. </span><span class="content">SOL-4</span><a class="self-link" href="#proscons-4"></a></h4>
    <ul>
     <li data-md>
      <p>Pros</p>
      <ul>
       <li data-md>
-       <p>Web services can trust devices as far as they can trust private CAs for the devices.</p>
+       <p>Web services can trust <a data-link-type="dfn" href="#device" id="ref-for-device④⑥">devices</a> as far as they can trust <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca④">private CAs</a> for the <a data-link-type="dfn" href="#device" id="ref-for-device④⑦">devices</a>.</p>
       <li data-md>
        <p>Device domain names can be validated if ACME can be extended for local domain names.</p>
       <li data-md>
        <p>Existing PKI-based methods for managing the lifecycle of certificates can be used (e.g., CRL, OCSP).</p>
       <li data-md>
-       <p>If a <a data-link-type="dfn" href="#device" id="ref-for-device②①">device</a> can get <a data-link-type="dfn" href="#web-service" id="ref-for-web-service⑥">web service</a> information from the AS which has a <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca④">private CA</a> role,
-the <a data-link-type="dfn" href="#device" id="ref-for-device②②">device</a> can configure proper CORS settings in advance as with Approach #2.</p>
+       <p>If a <a data-link-type="dfn" href="#device" id="ref-for-device④⑧">device</a> can get <a data-link-type="dfn" href="#web-service" id="ref-for-web-service⑧">web service</a> information from the AS which has a <a data-link-type="dfn" href="#private-ca" id="ref-for-private-ca⑤">private CA</a> role,
+the <a data-link-type="dfn" href="#device" id="ref-for-device④⑨">device</a> can configure proper CORS settings in advance as with <a href="#sol-3">§5.2.2 SOL-3: Using Application Layer Access Token</a>.</p>
       <li data-md>
-       <p>The authenticity of devices can be enhanced when the CA issues certificates
-for the devices based on attestation keys in TPM on the devices.</p>
+       <p>The authenticity of <a data-link-type="dfn" href="#device" id="ref-for-device⑤⓪">devices</a> can be enhanced when the CA issues certificates
+for the <a data-link-type="dfn" href="#device" id="ref-for-device⑤①">devices</a> based on attestation keys in TPM on the <a data-link-type="dfn" href="#device" id="ref-for-device⑤②">devices</a>.</p>
      </ul>
     <li data-md>
      <p>Cons</p>
@@ -1860,15 +2011,15 @@ for the devices based on attestation keys in TPM on the devices.</p>
        <p>Another browser API would be needed to support the normal access pattern use case.</p>
      </ul>
    </ul>
-   <h2 class="heading settled" data-level="5" id="conclusion"><span class="secno">5. </span><span class="content">Conclusion</span><a class="self-link" href="#conclusion"></a></h2>
-   <p>In this document, we introduced three approaches to enable local HTTPS communications
-that would not require the browsers having <a data-link-type="dfn" href="#public-ca" id="ref-for-public-ca②">public CA</a> certificates.
-However, these approaches would require browser extensions and other protocol
+   <h2 class="heading settled" data-level="6" id="conclusion"><span class="secno">6. </span><span class="content">Conclusion</span><a class="self-link" href="#conclusion"></a></h2>
+   <p>In this document, we introduced possible solutions to enable local HTTPS communications
+from browsers to [=devices] that is not publicly accessible.
+However, these solutions would require browser extensions and other protocol
 standardization as identified. The motivation came from the industry need of providing
 HTTPS access to IoT devices, majority of which will not have a global domain name
 so that the domain name can be verified and a certificate can be issued.
-We hope that this paper will spur the discussions within the Community Group and
-in general within the W3C community so that a solution can be developed and standardized.</p>
+We hope that this document will spur the discussions within the W3C community so that
+a solution can be developed and standardized.</p>
   </main>
   <div data-fill-with="conformance">
    <h2 class="no-ref no-num heading settled" id="conformance"><span class="content"> Conformance</span><a class="self-link" href="#conformance"></a></h2>
@@ -2019,8 +2170,11 @@ in general within the W3C community so that a solution can be developed and stan
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
+   <li><a href="#cross-origin-access-pattern">Cross-origin access pattern</a><span>, in §3.3</span>
    <li><a href="#device">device</a><span>, in §2</span>
+   <li><a href="#local-network">local network</a><span>, in §2</span>
    <li><a href="#non-web-pki-certificate">non-Web PKI certificate</a><span>, in §2</span>
+   <li><a href="#normal-access-pattern">Normal access pattern</a><span>, in §3.3</span>
    <li><a href="#private-ca">private CA</a><span>, in §2</span>
    <li><a href="#public-ca">public CA</a><span>, in §2</span>
    <li><a href="#ua">UA</a><span>, in §2</span>
@@ -2035,107 +2189,181 @@ in general within the W3C community so that a solution can be developed and stan
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
-   <dt id="biblio-ace">[ACE]
-   <dd><a href="https://datatracker.ietf.org/wg/ace/about/">Authentication and Authorization for Constrained Environments (ace)</a>. URL: <a href="https://datatracker.ietf.org/wg/ace/about/">https://datatracker.ietf.org/wg/ace/about/</a>
    <dt id="biblio-acme-draft-8">[ACME-DRAFT-8]
    <dd><a href="https://tools.ietf.org/html/draft-ietf-acme-acme-8">Automatic Certificate Management Environment (ACME)</a>. URL: <a href="https://tools.ietf.org/html/draft-ietf-acme-acme-8">https://tools.ietf.org/html/draft-ietf-acme-acme-8</a>
-   <dt id="biblio-anima">[ANIMA]
-   <dd><a href="https://datatracker.ietf.org/wg/anima/about/">Autonomic Networking Integrated Model and Approach (anima)</a>. URL: <a href="https://datatracker.ietf.org/wg/anima/about/">https://datatracker.ietf.org/wg/anima/about/</a>
-   <dt id="biblio-ca-browser-forum-guideline">[CA-Browser-Forum-Guideline]
+   <dt id="biblio-cabforum-guidance-deprecated-internal-names">[CABFORUM-GUIDANCE-DEPRECATED-INTERNAL-NAMES]
    <dd><a href="https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf">Internal Server Names and IP Address Requirements for SSL</a>. June 2012. URL: <a href="https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf">https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf</a>
    <dt id="biblio-cors-and-rfc1918">[CORS-AND-RFC1918]
    <dd><a href="https://wicg.github.io/cors-rfc1918/">CORS and RFC1918</a>. URL: <a href="https://wicg.github.io/cors-rfc1918/">https://wicg.github.io/cors-rfc1918/</a>
    <dt id="biblio-ec-jpake">[EC-JPAKE]
    <dd><a href="https://tools.ietf.org/html/draft-cragie-tls-ecjpake-01">Elliptic Curve J-PAKE Cipher Suites</a>. URL: <a href="https://tools.ietf.org/html/draft-cragie-tls-ecjpake-01">https://tools.ietf.org/html/draft-cragie-tls-ecjpake-01</a>
    <dt id="biblio-fetch">[FETCH]
-   <dd><a href="https://fetch.spec.whatwg.org/">Fetch (Living Standard)</a>. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
+   <dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/">Fetch Standard</a>. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-https-for-local-domains">[HTTPS-FOR-LOCAL-DOMAINS]
    <dd><a href="https://docs.google.com/document/d/170rFC91jqvpFrKIqG4K8Vox8AL4LeQXzfikBQXYPmzU/edit?usp=shari">HTTPS for Local Domains</a>. URL: <a href="https://docs.google.com/document/d/170rFC91jqvpFrKIqG4K8Vox8AL4LeQXzfikBQXYPmzU/edit?usp=shari">https://docs.google.com/document/d/170rFC91jqvpFrKIqG4K8Vox8AL4LeQXzfikBQXYPmzU/edit?usp=shari</a>
    <dt id="biblio-httpslocal-usecases">[HTTPSLOCAL-USECASES]
    <dd><a href="https://httpslocal.github.io/usecases/">Use Cases and Requirements on HTTPS-enabled Local Network Servers</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/">https://httpslocal.github.io/usecases/</a>
    <dt id="biblio-ieee8021ar">[IEEE802.1AR]
    <dd><a href="https://1.ieee802.org/security/802-1ar/">802.1AR: Secure Device Identity</a>. URL: <a href="https://1.ieee802.org/security/802-1ar/">https://1.ieee802.org/security/802-1ar/</a>
+   <dt id="biblio-ietf-ace-wg">[IETF-ACE-WG]
+   <dd><a href="https://datatracker.ietf.org/wg/ace/about/">Authentication and Authorization for Constrained Environments (ace)</a>. URL: <a href="https://datatracker.ietf.org/wg/ace/about/">https://datatracker.ietf.org/wg/ace/about/</a>
+   <dt id="biblio-ietf-anima-wg">[IETF-ANIMA-WG]
+   <dd><a href="https://datatracker.ietf.org/wg/anima/about/">Autonomic Networking Integrated Model and Approach (anima)</a>. URL: <a href="https://datatracker.ietf.org/wg/anima/about/">https://datatracker.ietf.org/wg/anima/about/</a>
+   <dt id="biblio-ietf-oauth-wg">[IETF-OAUTH-WG]
+   <dd><a href="https://datatracker.ietf.org/wg/oauth/about/">Web Authorization Protocol (oauth)</a>. URL: <a href="https://datatracker.ietf.org/wg/oauth/about/">https://datatracker.ietf.org/wg/oauth/about/</a>
+   <dt id="biblio-lets-encrypt">[LETS-ENCRYPT]
+   <dd><a href="https://letsencrypt.org/">Let's Encrypt - Free SSL/TLS Certificates</a>. URL: <a href="https://letsencrypt.org/">https://letsencrypt.org/</a>
    <dt id="biblio-mbed-tls">[MBED-TLS]
    <dd><a href="https://www.mbed.com/en/technologies/security/mbed-tls/">Mbed TLS</a>. URL: <a href="https://www.mbed.com/en/technologies/security/mbed-tls/">https://www.mbed.com/en/technologies/security/mbed-tls/</a>
-   <dt id="biblio-oauth">[OAUTH]
-   <dd><a href="https://datatracker.ietf.org/wg/oauth/about/">Web Authorization Protocol (oauth)</a>. URL: <a href="https://datatracker.ietf.org/wg/oauth/about/">https://datatracker.ietf.org/wg/oauth/about/</a>
-   <dt id="biblio-pake">[PAKE]
-   <dd><a href="https://tools.ietf.org/html/rfc8236">J-PAKE: Password-Authenticated Key Exchange by Juggling (RFC8236)</a>. September 2017. URL: <a href="https://tools.ietf.org/html/rfc8236">https://tools.ietf.org/html/rfc8236</a>
-   <dt id="biblio-pki-certificate-identifier-format-for-devices">[PKI-Certificate-Identifier-Format-for-Devices]
+   <dt id="biblio-pki-certificate-identifier-format-for-devices">[PKI-CERTIFICATE-IDENTIFIER-FORMAT-FOR-DEVICES]
    <dd><a href="https://tools.ietf.org/id/draft-friel-pki-for-devices-00.html">PKI Certificate Identifier Format for Devices</a>. URL: <a href="https://tools.ietf.org/id/draft-friel-pki-for-devices-00.html">https://tools.ietf.org/id/draft-friel-pki-for-devices-00.html</a>
    <dt id="biblio-plex">[PLEX]
    <dd><a href="https://blog.filippo.io/how-plex-is-doing-https-for-all-its-users/">How PLEX is doing HTTPS for all its users</a>. URL: <a href="https://blog.filippo.io/how-plex-is-doing-https-for-all-its-users/">https://blog.filippo.io/how-plex-is-doing-https-for-all-its-users/</a>
-   <dt id="biblio-rpk">[RPK]
-   <dd><a href="https://tools.ietf.org/html/rfc7250">Using Raw Public Keys in Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS) (RFC7250)</a>. URL: <a href="https://tools.ietf.org/html/rfc7250">https://tools.ietf.org/html/rfc7250</a>
+   <dt id="biblio-req-1">[REQ-1]
+   <dd><a href="https://httpslocal.github.io/usecases/#req-1">REQ-1: Guarantee of Device Trustworthiness</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#req-1">https://httpslocal.github.io/usecases/#req-1</a>
+   <dt id="biblio-rfc1122">[RFC1122]
+   <dd>R. Braden, Ed.. <a href="https://tools.ietf.org/html/rfc1122">Requirements for Internet Hosts - Communication Layers</a>. October 1989. Internet Standard. URL: <a href="https://tools.ietf.org/html/rfc1122">https://tools.ietf.org/html/rfc1122</a>
+   <dt id="biblio-rfc1918">[RFC1918]
+   <dd>Y. Rekhter; et al. <a href="https://tools.ietf.org/html/rfc1918">Address Allocation for Private Internets</a>. February 1996. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc1918">https://tools.ietf.org/html/rfc1918</a>
+   <dt id="biblio-rfc3927">[RFC3927]
+   <dd>S. Cheshire; B. Aboba; E. Guttman. <a href="https://tools.ietf.org/html/rfc3927">Dynamic Configuration of IPv4 Link-Local Addresses</a>. May 2005. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc3927">https://tools.ietf.org/html/rfc3927</a>
+   <dt id="biblio-rfc4191">[RFC4191]
+   <dd>R. Draves; D. Thaler. <a href="https://tools.ietf.org/html/rfc4191">Default Router Preferences and More-Specific Routes</a>. November 2005. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc4191">https://tools.ietf.org/html/rfc4191</a>
+   <dt id="biblio-rfc4193">[RFC4193]
+   <dd>R. Hinden; B. Haberman. <a href="https://tools.ietf.org/html/rfc4193">Unique Local IPv6 Unicast Addresses</a>. October 2005. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc4193">https://tools.ietf.org/html/rfc4193</a>
+   <dt id="biblio-rfc6762">[RFC6762]
+   <dd>S. Cheshire; M. Krochmal. <a href="https://tools.ietf.org/html/rfc6762">Multicast DNS</a>. February 2013. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6762">https://tools.ietf.org/html/rfc6762</a>
+   <dt id="biblio-rfc7250">[RFC7250]
+   <dd>P. Wouters, Ed.; et al. <a href="https://tools.ietf.org/html/rfc7250">Using Raw Public Keys in Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</a>. June 2014. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc7250">https://tools.ietf.org/html/rfc7250</a>
+   <dt id="biblio-rfc8236">[RFC8236]
+   <dd>F. Hao, Ed.. <a href="https://tools.ietf.org/html/rfc8236">J-PAKE: Password-Authenticated Key Exchange by Juggling</a>. September 2017. Informational. URL: <a href="https://tools.ietf.org/html/rfc8236">https://tools.ietf.org/html/rfc8236</a>
+   <dt id="biblio-rfc8375">[RFC8375]
+   <dd>P. Pfister; T. Lemon. <a href="https://tools.ietf.org/html/rfc8375">Special-Use Domain 'home.arpa.'</a>. May 2018. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc8375">https://tools.ietf.org/html/rfc8375</a>
+   <dt id="biblio-secure-contexts">[SECURE-CONTEXTS]
+   <dd>Mike West. <a href="https://www.w3.org/TR/secure-contexts/">Secure Contexts</a>. 15 September 2016. CR. URL: <a href="https://www.w3.org/TR/secure-contexts/">https://www.w3.org/TR/secure-contexts/</a>
    <dt id="biblio-tpac-2017-breakout-session">[TPAC-2017-breakout-session]
    <dd><a href="https://www.w3.org/wiki/File:TPAC2017_httpslocal-2.pdf">How can we provide the devices with valid certificates?</a>. URL: <a href="https://www.w3.org/wiki/File:TPAC2017_httpslocal-2.pdf">https://www.w3.org/wiki/File:TPAC2017_httpslocal-2.pdf</a>
-   <dt id="biblio-w3c-second-screen-wg">[W3C-Second-Screen-WG]
+   <dt id="biblio-uc-01">[UC-01]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-01">UC-01: Playing audio content in a home storage device from a cloud service</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-01">https://httpslocal.github.io/usecases/#uc-01</a>
+   <dt id="biblio-uc-02">[UC-02]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-02">UC-02: Video streaming with cache storage in local network</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-02">https://httpslocal.github.io/usecases/#uc-02</a>
+   <dt id="biblio-uc-03">[UC-03]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-03">UC-03: Web-based UI for home appliances (input/output constrained devices)</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-03">https://httpslocal.github.io/usecases/#uc-03</a>
+   <dt id="biblio-uc-04">[UC-04]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-04">UC-04: Embedded system monitoring and controlling for display-capable devices</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-04">https://httpslocal.github.io/usecases/#uc-04</a>
+   <dt id="biblio-uc-05">[UC-05]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-05">UC-05: Data analysis from analytical and measuring instruments in local network</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-05">https://httpslocal.github.io/usecases/#uc-05</a>
+   <dt id="biblio-uc-06">[UC-06]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-06">UC-06: Photo sharing between online services and home NAS devices</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-06">https://httpslocal.github.io/usecases/#uc-06</a>
+   <dt id="biblio-uc-07">[UC-07]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-07">UC-07: Secure offline communication for home automation</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-07">https://httpslocal.github.io/usecases/#uc-07</a>
+   <dt id="biblio-uc-08">[UC-08]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-08">UC-08: Companion Device for Broadcast Interactive Service</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-08">https://httpslocal.github.io/usecases/#uc-08</a>
+   <dt id="biblio-uc-09">[UC-09]
+   <dd><a href="https://httpslocal.github.io/usecases/#uc-09">UC-09: Presenting with Projector at office</a>. September 2019. URL: <a href="https://httpslocal.github.io/usecases/#uc-09">https://httpslocal.github.io/usecases/#uc-09</a>
+   <dt id="biblio-w3c-second-screen-wg">[W3C-SECOND-SCREEN-WG]
    <dd><a href="https://www.w3.org/2014/secondscreen/">W3C Second Screen WG</a>. URL: <a href="https://www.w3.org/2014/secondscreen/">https://www.w3.org/2014/secondscreen/</a>
    <dt id="biblio-webthings-gateway">[WEBTHINGS-GATEWAY]
    <dd><a href="https://iot.mozilla.org/gateway/">WebThings Gateway</a>. URL: <a href="https://iot.mozilla.org/gateway/">https://iot.mozilla.org/gateway/</a>
   </dl>
-  <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
-  <div style="counter-reset:issue">
-   <div class="issue"> Refine the structure of this section. Do we need to categorize the solutions based on the access patterns described the previous section?<a href="#issue-a2297428"> ↵ </a></div>
-  </div>
+  <aside class="dfn-panel" data-for="local-network">
+   <b><a href="#local-network">#local-network</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-local-network">2. Terminology</a> <a href="#ref-for-local-network①">(2)</a> <a href="#ref-for-local-network②">(3)</a>
+    <li><a href="#ref-for-local-network③">3.1. Target Devices</a>
+    <li><a href="#ref-for-local-network④">3.2. Target Local Networks</a> <a href="#ref-for-local-network⑤">(2)</a>
+    <li><a href="#ref-for-local-network⑥">5. Possible Solutions</a>
+    <li><a href="#ref-for-local-network⑦">5.2.2.3. Dependency to other SDOs</a>
+    <li><a href="#ref-for-local-network⑧">5.2.3. SOL-4: Using Device Authority-Issued Certificate</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="ua">
    <b><a href="#ua">#ua</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-ua">2. Terminology</a> <a href="#ref-for-ua①">(2)</a> <a href="#ref-for-ua②">(3)</a> <a href="#ref-for-ua③">(4)</a>
-    <li><a href="#ref-for-ua④">3. Use Cases</a> <a href="#ref-for-ua⑤">(2)</a>
-    <li><a href="#ref-for-ua⑥">4.2. non-Web PKI based Solutions</a>
-    <li><a href="#ref-for-ua⑦">4.2.1. Approach 1</a>
-    <li><a href="#ref-for-ua⑧">4.2.2. Approach 2</a> <a href="#ref-for-ua⑨">(2)</a> <a href="#ref-for-ua①⓪">(3)</a> <a href="#ref-for-ua①①">(4)</a>
-    <li><a href="#ref-for-ua①②">4.2.3. Approach 3</a> <a href="#ref-for-ua①③">(2)</a> <a href="#ref-for-ua①④">(3)</a>
+    <li><a href="#ref-for-ua④">3.2. Target Local Networks</a>
+    <li><a href="#ref-for-ua⑤">3.3. Target Access Patterns</a> <a href="#ref-for-ua⑥">(2)</a>
+    <li><a href="#ref-for-ua⑦">4.1. Web PKI based Solutions</a>
+    <li><a href="#ref-for-ua⑧">4.2. Non-Web PKI based Solutions</a>
+    <li><a href="#ref-for-ua⑨">5.2. Non-Web PKI based Solutions</a>
+    <li><a href="#ref-for-ua①⓪">5.2.1. SOL-2: Using Shared Secret</a>
+    <li><a href="#ref-for-ua①①">5.2.1.1. Normal Access Pattern</a> <a href="#ref-for-ua①②">(2)</a>
+    <li><a href="#ref-for-ua①③">5.2.1.2. Cross-Origin Access Pattern</a> <a href="#ref-for-ua①④">(2)</a> <a href="#ref-for-ua①⑤">(3)</a>
+    <li><a href="#ref-for-ua①⑥">5.2.2. SOL-3: Using Application Layer Access Token</a>
+    <li><a href="#ref-for-ua①⑦">5.2.2.1. Cross-Origin Access Pattern</a> <a href="#ref-for-ua①⑧">(2)</a> <a href="#ref-for-ua①⑨">(3)</a>
+    <li><a href="#ref-for-ua②⓪">5.2.3. SOL-4: Using Device Authority-Issued Certificate</a> <a href="#ref-for-ua②①">(2)</a> <a href="#ref-for-ua②②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="device">
    <b><a href="#device">#device</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-device">2. Terminology</a>
-    <li><a href="#ref-for-device①">3. Use Cases</a> <a href="#ref-for-device②">(2)</a> <a href="#ref-for-device③">(3)</a> <a href="#ref-for-device④">(4)</a>
-    <li><a href="#ref-for-device⑤">4.2.1. Approach 1</a> <a href="#ref-for-device⑥">(2)</a> <a href="#ref-for-device⑦">(3)</a> <a href="#ref-for-device⑧">(4)</a>
-    <li><a href="#ref-for-device⑨">4.2.2. Approach 2</a> <a href="#ref-for-device①⓪">(2)</a> <a href="#ref-for-device①①">(3)</a> <a href="#ref-for-device①②">(4)</a> <a href="#ref-for-device①③">(5)</a> <a href="#ref-for-device①④">(6)</a> <a href="#ref-for-device①⑤">(7)</a> <a href="#ref-for-device①⑥">(8)</a>
-    <li><a href="#ref-for-device①⑦">4.2.3. Approach 3</a>
-    <li><a href="#ref-for-device①⑧">4.3.1. Approach #1</a>
-    <li><a href="#ref-for-device①⑨">4.3.2. Approach #2</a> <a href="#ref-for-device②⓪">(2)</a>
-    <li><a href="#ref-for-device②①">4.3.3. Approach #3</a> <a href="#ref-for-device②②">(2)</a>
+    <li><a href="#ref-for-device①">3.1. Target Devices</a> <a href="#ref-for-device②">(2)</a> <a href="#ref-for-device③">(3)</a>
+    <li><a href="#ref-for-device④">3.3. Target Access Patterns</a> <a href="#ref-for-device⑤">(2)</a> <a href="#ref-for-device⑥">(3)</a> <a href="#ref-for-device⑦">(4)</a>
+    <li><a href="#ref-for-device⑧">4.1. Web PKI based Solutions</a> <a href="#ref-for-device⑨">(2)</a> <a href="#ref-for-device①⓪">(3)</a> <a href="#ref-for-device①①">(4)</a>
+    <li><a href="#ref-for-device①②">5.2. Non-Web PKI based Solutions</a>
+    <li><a href="#ref-for-device①③">5.2.1. SOL-2: Using Shared Secret</a>
+    <li><a href="#ref-for-device①④">5.2.1.1. Normal Access Pattern</a> <a href="#ref-for-device①⑤">(2)</a> <a href="#ref-for-device①⑥">(3)</a> <a href="#ref-for-device①⑦">(4)</a> <a href="#ref-for-device①⑧">(5)</a>
+    <li><a href="#ref-for-device①⑨">5.2.1.2. Cross-Origin Access Pattern</a> <a href="#ref-for-device②⓪">(2)</a> <a href="#ref-for-device②①">(3)</a>
+    <li><a href="#ref-for-device②②">5.2.2. SOL-3: Using Application Layer Access Token</a> <a href="#ref-for-device②③">(2)</a> <a href="#ref-for-device②④">(3)</a> <a href="#ref-for-device②⑤">(4)</a> <a href="#ref-for-device②⑥">(5)</a> <a href="#ref-for-device②⑦">(6)</a> <a href="#ref-for-device②⑧">(7)</a> <a href="#ref-for-device②⑨">(8)</a>
+    <li><a href="#ref-for-device③⓪">5.2.2.1. Cross-Origin Access Pattern</a> <a href="#ref-for-device③①">(2)</a> <a href="#ref-for-device③②">(3)</a> <a href="#ref-for-device③③">(4)</a> <a href="#ref-for-device③④">(5)</a>
+    <li><a href="#ref-for-device③⑤">5.2.3. SOL-4: Using Device Authority-Issued Certificate</a> <a href="#ref-for-device③⑥">(2)</a>
+    <li><a href="#ref-for-device③⑦">5.3.2. SOL-2</a> <a href="#ref-for-device③⑧">(2)</a>
+    <li><a href="#ref-for-device③⑨">5.3.3. SOL-3</a> <a href="#ref-for-device④⓪">(2)</a> <a href="#ref-for-device④①">(3)</a> <a href="#ref-for-device④②">(4)</a> <a href="#ref-for-device④③">(5)</a> <a href="#ref-for-device④④">(6)</a> <a href="#ref-for-device④⑤">(7)</a>
+    <li><a href="#ref-for-device④⑥">5.3.4. SOL-4</a> <a href="#ref-for-device④⑦">(2)</a> <a href="#ref-for-device④⑧">(3)</a> <a href="#ref-for-device④⑨">(4)</a> <a href="#ref-for-device⑤⓪">(5)</a> <a href="#ref-for-device⑤①">(6)</a> <a href="#ref-for-device⑤②">(7)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="web-service">
    <b><a href="#web-service">#web-service</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-web-service">4.2.1. Approach 1</a>
-    <li><a href="#ref-for-web-service①">4.2.2. Approach 2</a>
-    <li><a href="#ref-for-web-service②">4.2.3. Approach 3</a> <a href="#ref-for-web-service③">(2)</a>
-    <li><a href="#ref-for-web-service④">4.3.2. Approach #2</a> <a href="#ref-for-web-service⑤">(2)</a>
-    <li><a href="#ref-for-web-service⑥">4.3.3. Approach #3</a>
+    <li><a href="#ref-for-web-service">5.2.1.2. Cross-Origin Access Pattern</a>
+    <li><a href="#ref-for-web-service①">5.2.2. SOL-3: Using Application Layer Access Token</a> <a href="#ref-for-web-service②">(2)</a>
+    <li><a href="#ref-for-web-service③">5.2.2.1. Cross-Origin Access Pattern</a>
+    <li><a href="#ref-for-web-service④">5.2.3. SOL-4: Using Device Authority-Issued Certificate</a> <a href="#ref-for-web-service⑤">(2)</a>
+    <li><a href="#ref-for-web-service⑥">5.3.3. SOL-3</a> <a href="#ref-for-web-service⑦">(2)</a>
+    <li><a href="#ref-for-web-service⑧">5.3.4. SOL-4</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="web-pki-certificate">
    <b><a href="#web-pki-certificate">#web-pki-certificate</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-web-pki-certificate">2. Terminology</a>
+    <li><a href="#ref-for-web-pki-certificate①">3.1. Target Devices</a>
+    <li><a href="#ref-for-web-pki-certificate②">4.1. Web PKI based Solutions</a>
+    <li><a href="#ref-for-web-pki-certificate③">5. Possible Solutions</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="non-web-pki-certificate">
    <b><a href="#non-web-pki-certificate">#non-web-pki-certificate</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-non-web-pki-certificate">2. Terminology</a>
+    <li><a href="#ref-for-non-web-pki-certificate①">4.2. Non-Web PKI based Solutions</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="public-ca">
    <b><a href="#public-ca">#public-ca</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-public-ca">4.1. Web PKI based Solutions</a> <a href="#ref-for-public-ca①">(2)</a>
-    <li><a href="#ref-for-public-ca②">5. Conclusion</a>
+    <li><a href="#ref-for-public-ca">4.1. Web PKI based Solutions</a> <a href="#ref-for-public-ca①">(2)</a> <a href="#ref-for-public-ca②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="private-ca">
    <b><a href="#private-ca">#private-ca</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-private-ca">4.2.3. Approach 3</a> <a href="#ref-for-private-ca①">(2)</a> <a href="#ref-for-private-ca②">(3)</a> <a href="#ref-for-private-ca③">(4)</a>
-    <li><a href="#ref-for-private-ca④">4.3.3. Approach #3</a>
+    <li><a href="#ref-for-private-ca">5.2.3. SOL-4: Using Device Authority-Issued Certificate</a> <a href="#ref-for-private-ca①">(2)</a> <a href="#ref-for-private-ca②">(3)</a> <a href="#ref-for-private-ca③">(4)</a>
+    <li><a href="#ref-for-private-ca④">5.3.4. SOL-4</a> <a href="#ref-for-private-ca⑤">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="normal-access-pattern">
+   <b><a href="#normal-access-pattern">#normal-access-pattern</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-normal-access-pattern">5.2.1.1. Normal Access Pattern</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="cross-origin-access-pattern">
+   <b><a href="#cross-origin-access-pattern">#cross-origin-access-pattern</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-cross-origin-access-pattern">5.2.1.2. Cross-Origin Access Pattern</a> <a href="#ref-for-cross-origin-access-pattern①">(2)</a>
+    <li><a href="#ref-for-cross-origin-access-pattern②">5.2.2.1. Cross-Origin Access Pattern</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
