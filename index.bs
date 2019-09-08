@@ -277,7 +277,7 @@ This solution resolves the problem by introducing an [[IETF-ACE-WG]] and [[IETF-
 AS (Authorization Server) as an authority of the [=device=] into the local HTTPS system as shown below.
 
 <div align="center">
-<img src="figs/fig_solution_2_1.png" width="480px">
+<img src="figs/fig_sol_3_1.png" width="480px">
 </div>
 
 The ACE components have the following relationships:
@@ -329,7 +329,7 @@ fetch("https://device.local/stuff", {
 When the [[FETCH]] API above is called, the [=UA=] shows a following pop-up window.
 
 <div align="center">
-<img src="figs/fig_solution_2_2.png" width="480px">
+<img src="figs/fig_sol_3_2.png" width="480px">
 </div>
 
 As the result, HTTPS accesses from the [=web service=] to the [=device=] are achieved
@@ -385,7 +385,7 @@ Similar to earlier solutions, the [=UA=] shows a following pop-up window
 when the [[FETCH]] API above is called.
 
 <div align="center">
-<img src="figs/fig_solution_3_1.png" width="480px">
+<img src="figs/fig_sol_4_1.png" width="480px">
 </div>
 
 For this solution, we argue that the framework on which a device vendor
