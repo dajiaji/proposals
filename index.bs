@@ -559,7 +559,6 @@ However, these approaches would require browser extensions and other protocol
 standardization as identified. The motivation came from the industry need of providing
 HTTPS access to IoT devices, majority of which will not have a global domain name
 so that the domain name can be verified and a certificate can be issued.
-
 We hope that this document will spur the discussions within the W3C community so that
 a solution can be developed and standardized.
 
